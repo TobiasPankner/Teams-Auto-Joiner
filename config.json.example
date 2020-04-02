@@ -1,0 +1,18 @@
+{
+  "email": "",
+  "password": "",
+  "blacklist": [
+    {
+      "team_name": "Example Team 1",
+      "channel_names": [
+        "First Channel to blacklist in this team",
+        "Second Channel to blacklist"
+      ]
+    },
+     {
+      "team_name": "Blacklist whole team",
+      "channel_names": [
+      ]
+    }
+  ]
+}
