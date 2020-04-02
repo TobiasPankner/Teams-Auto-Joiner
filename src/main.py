@@ -109,8 +109,13 @@ class Team:
                 continue
 
             join_meeting_elems = browser.find_elements_by_css_selector("button[ng-click='ctrl.joinCall()']")
-            meeting_ids = [re.search(uuid_regex, join_meeting_elem.get_attribute('track-data')).group(0) for
-                           join_meeting_elem in join_meeting_elems]
+
+            meeting_ids = []
+            for join_meeting_elem in join_meeting_elems:
+                try:
+                    meeting_ids.append(re.search(uuid_regex, join_meeting_elem.get_attribute('track-data')).group(0))
+                except exceptions.StaleElementReferenceException:
+                    continue
 
             # remove duplicates
             meeting_ids = list(dict.fromkeys(meeting_ids))
@@ -182,6 +187,17 @@ def join_newest_meeting(teams):
     join_now_btn = wait_till_found("button[data-tid='prejoin-join-button']", 30)
     if join_now_btn is None:
         return
+
+    video_btn = browser.find_element_by_css_selector("toggle-button[data-tid='toggle-video']>div>button")
+    video_is_on = video_btn.get_attribute("aria-pressed")
+    if video_is_on == "true":
+        video_btn.click()
+
+    audio_btn = browser.find_element_by_css_selector("toggle-button[data-tid='toggle-mute']>div>button")
+    audio_is_on = audio_btn.get_attribute("aria-pressed")
+    if audio_is_on == "true":
+        audio_btn.click()
+
     join_now_btn.click()
 
     browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()
