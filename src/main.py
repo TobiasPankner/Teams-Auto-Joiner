@@ -1,13 +1,12 @@
 import json
-import time
-from termcolor import colored
 import re
+import time
 
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 from selenium.common import exceptions
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 browser = None
 config = None
@@ -28,7 +27,7 @@ class Channel:
         self.blacklisted = blacklisted
 
     def __str__(self):
-        return colored(self.name, 'red') if self.blacklisted else self.name
+        return self.name + " [BLACKLISTED]" if self.blacklisted else self.name
 
     def get_elem(self, parent):
         try:
