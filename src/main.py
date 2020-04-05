@@ -250,25 +250,30 @@ def main():
         team.init_channels()
         team.check_blacklist()
 
+    print("\nFound Teams and Channels: ")
     for team in teams:
         print(team)
 
-    sel_str = "\nStart [s], Reload teams [r], quit[q]\n"
-
-    selection = input(sel_str).lower()
-    while selection != 's':
-        if selection == 'q':
-            exit(0)
-        if selection == 'r':
-            teams = get_teams()
-            for team in teams:
-                team.init_channels()
-                team.check_blacklist()
-
-            for team in teams:
-                print(team)
+    if not config['start_automatically']:
+        sel_str = "\nStart [s], Reload teams [r], Quit [q]\n"
 
         selection = input(sel_str).lower()
+        while selection != 's':
+            if selection == 'q':
+                browser.close()
+                exit(0)
+            if selection == 'r':
+                teams = get_teams()
+                for team in teams:
+                    team.init_channels()
+                    team.check_blacklist()
+
+                for team in teams:
+                    print(team)
+
+            selection = input(sel_str).lower()
+
+    print("\nWorking...")
 
     while 1:
         time.sleep(2)
