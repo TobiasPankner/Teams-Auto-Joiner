@@ -13,4 +13,4 @@ Python script to automatically join Microsoft Teams meetings.
 
  1. Rename the [config.json.example](config.json.example) file to "config.json"
  2. Edit the "config.json" file to fit your preferences
- 3. Run [main.py](src/config.json.example)
+ 3. Run [main.py](/src/main.py)
