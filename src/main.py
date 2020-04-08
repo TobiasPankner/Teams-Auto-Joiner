@@ -1,4 +1,5 @@
 import json
+import random
 import re
 import time
 
@@ -197,6 +198,10 @@ def join_newest_meeting(teams):
     if audio_is_on == "true":
         audio_btn.click()
 
+    if config['random_delay']:
+        delay = random.randrange(10, 31, 1)
+        print(f"Wating for {delay}s")
+        time.sleep(delay)
     join_now_btn.click()
 
     browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()

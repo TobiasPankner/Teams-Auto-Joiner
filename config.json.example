@@ -2,6 +2,7 @@
   "email": "",
   "password": "",
   "start_automatically": false,
+  "random_delay": false,
   "blacklist": [
     {
       "team_name": "Example Team 1",
