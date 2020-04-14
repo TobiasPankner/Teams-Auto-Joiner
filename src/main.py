@@ -129,6 +129,12 @@ class Team:
             f"ul>li[role='treeitem'][class='match-parent team left-rail-item-kb-l2']>div[data-tid='team-{self.name}-li']")
 
 
+def load_config():
+    global config
+    with open('../config.json') as json_data_file:
+        config = json.load(json_data_file)
+
+
 def wait_till_found(sel, timeout):
     try:
         element_present = EC.presence_of_element_located((By.CSS_SELECTOR, sel))
@@ -188,20 +194,23 @@ def join_newest_meeting(teams):
     if join_now_btn is None:
         return
 
+    # turn camera off
     video_btn = browser.find_element_by_css_selector("toggle-button[data-tid='toggle-video']>div>button")
     video_is_on = video_btn.get_attribute("aria-pressed")
     if video_is_on == "true":
         video_btn.click()
 
+    # turn mic off
     audio_btn = browser.find_element_by_css_selector("toggle-button[data-tid='toggle-mute']>div>button")
     audio_is_on = audio_btn.get_attribute("aria-pressed")
     if audio_is_on == "true":
         audio_btn.click()
 
-    if config['random_delay']:
+    if 'random_delay' in config and config['random_delay']:
         delay = random.randrange(10, 31, 1)
         print(f"Wating for {delay}s")
         time.sleep(delay)
+
     join_now_btn.click()
 
     browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()
@@ -226,8 +235,7 @@ def main():
     chrome_options.add_argument('--ignore-ssl-errors')
     browser = webdriver.Chrome(chrome_options=chrome_options)
 
-    with open('../config.json') as json_data_file:
-        config = json.load(json_data_file)
+    load_config()
 
     browser.get("https://teams.microsoft.com")
 
@@ -261,7 +269,7 @@ def main():
     for team in teams:
         print(team)
 
-    if not config['start_automatically']:
+    if 'start_automatically' not in config or not config['start_automatically']:
         sel_str = "\nStart [s], Reload teams [r], Quit [q]\n"
 
         selection = input(sel_str).lower()
@@ -270,6 +278,7 @@ def main():
                 browser.close()
                 exit(0)
             if selection == 'r':
+                load_config()
                 teams = get_teams()
                 for team in teams:
                     team.init_channels()
