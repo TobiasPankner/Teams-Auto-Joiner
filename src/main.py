@@ -222,6 +222,8 @@ def main():
     global browser, config
 
     chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--ignore-certificate-errors')
+    chrome_options.add_argument('--ignore-ssl-errors')
     browser = webdriver.Chrome(chrome_options=chrome_options)
 
     with open('../config.json') as json_data_file:
