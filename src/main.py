@@ -113,7 +113,11 @@ class Team:
             meeting_ids = []
             for join_meeting_elem in join_meeting_elems:
                 try:
-                    meeting_ids.append(re.search(uuid_regex, join_meeting_elem.get_attribute('track-data')).group(0))
+                    uuid = re.search(uuid_regex, join_meeting_elem.get_attribute('track-data'))
+                    if uuid is None:
+                        continue
+
+                    meeting_ids.append(uuid.group(0))
                 except exceptions.StaleElementReferenceException:
                     continue
 
