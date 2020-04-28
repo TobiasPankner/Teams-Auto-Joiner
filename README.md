@@ -16,6 +16,6 @@ Always joins the newest meeting and doesn't leave it unless there is a newer one
  1. Rename the [config.json.example](config.json.example) file to "config.json"
  2. Edit the "config.json" file to fit your preferences (optional)
  3. Install dependencies: `pip install -r requirements.txt`
- 4. Run [main.py](/src/main.py): `python main.py`
+ 4. Run [main.py](/src/main.py): `python auto_joiner.py`
  5. After starting it may not find the teams and channels, if this is the case change the view to list
 <img src="https://i.imgur.com/GODoJYf.png?2" width="300" height="245" />
