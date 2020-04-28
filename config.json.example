@@ -3,6 +3,7 @@
   "password": "",
   "start_automatically": false,
   "random_delay": false,
+  "auto_leave_after_min": 120,
   "blacklist": [
     {
       "team_name": "Example Team 1",

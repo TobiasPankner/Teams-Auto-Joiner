@@ -2,6 +2,7 @@ import json
 import random
 import re
 import time
+from threading import Timer
 
 from selenium import webdriver
 from selenium.common import exceptions
@@ -9,10 +10,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-browser = None
+browser: webdriver.Chrome = None
 config = None
 active_meeting = None
 uuid_regex = r"\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b"
+hangup_thread: Timer = None
 
 
 class Meeting:
@@ -77,7 +79,7 @@ class Team:
 
     def check_blacklist(self):
         blacklist = config['blacklist']
-        blacklist_item = next((team for team in blacklist if team['team_name'] == self.name),  None)
+        blacklist_item = next((team for team in blacklist if team['team_name'] == self.name), None)
         if blacklist_item is None:
             return
 
@@ -162,7 +164,7 @@ def get_teams():
 
 
 def join_newest_meeting(teams):
-    global active_meeting
+    global active_meeting, hangup_thread
 
     meeting_to_join = Meeting(-1, None) if active_meeting is None else active_meeting
     meeting_team = None
@@ -220,6 +222,11 @@ def join_newest_meeting(teams):
     browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()
 
     active_meeting = meeting_to_join
+
+    if 'auto_leave_after_min' in config and config['auto_leave_after_min'] > 0:
+        hangup_thread = Timer(config['auto_leave_after_min']*60, hangup)
+        hangup_thread.start()
+
     return True
 
 
@@ -227,6 +234,8 @@ def hangup():
     try:
         hangup_btn = browser.find_element_by_css_selector("button[data-tid='call-hangup']")
         hangup_btn.click()
+
+        hangup_thread.cancel()
     except exceptions.NoSuchElementException:
         return
 
