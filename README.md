@@ -2,7 +2,7 @@
 Python script to automatically join Microsoft Teams meetings.
 Automatically turns off your microphone and camera before joining. Automatic login and blacklist can be set in the config file.
 
-Always joins the newest meeting and doesn't leave it unless there is a newer one or the user gets kicked.
+Always joins the newest meeting and doesn't leave it unless there is a newer one or the user gets kicked. Automatically leaving after x minutes can be configured in the config file.
 
 ![Demo](https://imgur.com/VQOJl8w.gif)
 ## Prerequisites
