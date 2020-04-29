@@ -236,7 +236,8 @@ def hangup():
         hangup_btn = browser.find_element_by_css_selector("button[data-tid='call-hangup']")
         hangup_btn.click()
 
-        hangup_thread.cancel()
+        if hangup_thread:
+            hangup_thread.cancel()
     except exceptions.NoSuchElementException:
         return
 
@@ -254,21 +255,25 @@ def main():
     browser.get("https://teams.microsoft.com")
 
     if config['email'] != "" and config['password'] != "":
-        login_email = wait_till_found("input[type='email']", 60)
-        if login_email is None:
-            exit(1)
+        login_email = wait_till_found("input[type='email']", 30)
+        if login_email is not None:
+            login_email.send_keys(config['email'])
+            time.sleep(1)
 
-        login_email.send_keys(config['email'])
-        time.sleep(1)
-        login_email.send_keys(Keys.ENTER)
+        # find the element again to avoid StaleElementReferenceException
+        login_email = wait_till_found("input[type='email']", 5)
+        if login_email is not None:
+            login_email.send_keys(Keys.ENTER)
 
-        login_pwd = wait_till_found("input[type='password']", 60)
-        if login_pwd is None:
-            exit(1)
+        login_pwd = wait_till_found("input[type='password']", 30)
+        if login_pwd is not None:
+            login_pwd.send_keys(config['password'])
+            time.sleep(1)
 
-        login_pwd.send_keys(config['password'])
-        time.sleep(1)
-        login_pwd.send_keys(Keys.ENTER)
+        # find the element again to avoid StaleElementReferenceException
+        login_pwd = wait_till_found("input[type='password']", 5)
+        if login_pwd is not None:
+            login_pwd.send_keys(Keys.ENTER)
 
     print("Waiting for correct page...")
     if wait_till_found("div[data-tid='team-channel-list']", 60 * 5) is None:
