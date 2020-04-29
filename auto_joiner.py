@@ -9,6 +9,7 @@ from selenium.common import exceptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.keys import Keys
 
 browser: webdriver.Chrome = None
 config = None
@@ -259,7 +260,7 @@ def main():
 
         login_email.send_keys(config['email'])
         time.sleep(1)
-        browser.find_element_by_css_selector("input[type='submit']").click()
+        login_email.send_keys(Keys.ENTER)
 
         login_pwd = wait_till_found("input[type='password']", 60)
         if login_pwd is None:
@@ -267,7 +268,7 @@ def main():
 
         login_pwd.send_keys(config['password'])
         time.sleep(1)
-        browser.find_element_by_css_selector("input[type='submit']").click()
+        login_pwd.send_keys(Keys.ENTER)
 
     print("Waiting for correct page...")
     if wait_till_found("div[data-tid='team-channel-list']", 60 * 5) is None:
