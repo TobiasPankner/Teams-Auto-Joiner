@@ -74,7 +74,7 @@ class Team:
         channel_names = [channel_elem.get_attribute("data-tid") for channel_elem in channel_elems]
         channel_names = [channel_name[channel_name.find('-channel-') + 9:channel_name.rfind("-li")] for channel_name
                          in
-                         channel_names]
+                         channel_names if channel_name is not None]
 
         self.channels = [Channel(channel_names[i], []) for i in range(len(channel_elems))]
 
