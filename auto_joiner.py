@@ -76,7 +76,7 @@ class Team:
                          in
                          channel_names if channel_name is not None]
 
-        self.channels = [Channel(channel_names[i], []) for i in range(len(channel_elems))]
+        self.channels = [Channel(channel_name, []) for channel_name in channel_names]
 
     def check_blacklist(self):
         blacklist = config['blacklist']
