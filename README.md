@@ -8,8 +8,6 @@ Always joins the newest meeting and doesn't leave it unless there is a newer one
 ## Prerequisites
 
  - Python3 ([Download](https://www.python.org/downloads/))
- - Chrome WebDriver for your version of Google Chrome ([Download](https://chromedriver.chromium.org/downloads))
- - Include the WebDriver location in your PATH environment variable ([Tutorial](https://zwbetz.com/download-chromedriver-binary-and-add-to-your-path-for-automated-functional-testing/))
 
 ## Run the script
 
