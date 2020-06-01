@@ -1,5 +1,5 @@
 # Teams-Auto-Joiner
-[![GitHub stars](https://img.shields.io/github/stars/TobiasPankner/Gleam-giveaway-bot.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/TobiasPankner/Gleam-giveaway-bot/stargazers/)  
+[![GitHub stars](https://img.shields.io/github/stars/TobiasPankner/Teams-Auto-Joiner.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/TobiasPankner/Teams-Auto-Joiner/stargazers/)  
 
 Python script to automatically join Microsoft Teams meetings.
 Automatically turns off your microphone and camera before joining. Automatic login and blacklist can be set in the config file.
