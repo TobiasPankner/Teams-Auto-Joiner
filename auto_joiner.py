@@ -157,7 +157,7 @@ def wait_till_found(sel, timeout):
 def get_teams():
     # find all team names
     team_elems = browser.find_elements_by_css_selector(
-        "ul>li[role='treeitem'][class='match-parent team left-rail-item-kb-l2']>div")
+        "ul>li[role='treeitem']>div:not(.ts-tree-header)")
     team_names = [team_elem.get_attribute("data-tid") for team_elem in team_elems]
     team_names = [team_name[team_name.find('team-') + 5:team_name.rfind("-li")] for team_name in team_names]
 
@@ -275,6 +275,11 @@ def main():
         login_pwd = wait_till_found("input[type='password']", 5)
         if login_pwd is not None:
             login_pwd.send_keys(Keys.ENTER)
+
+        time.sleep(1)
+        keep_logged_in = wait_till_found("input[id='idBtn_Back']", 5)
+        if keep_logged_in is not None:
+            keep_logged_in.click()
 
     print("Waiting for correct page...")
     if wait_till_found("div[data-tid='team-channel-list']", 60 * 5) is None:
