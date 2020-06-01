@@ -1,4 +1,6 @@
 # Teams-Auto-Joiner
+[![GitHub stars](https://img.shields.io/github/stars/TobiasPankner/Teams-Auto-Joiner.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/TobiasPankner/Teams-Auto-Joiner/stargazers/)  
+
 Python script to automatically join Microsoft Teams meetings.
 Automatically turns off your microphone and camera before joining. Automatic login and blacklist can be set in the config file.
 
@@ -8,8 +10,6 @@ Always joins the newest meeting and doesn't leave it unless there is a newer one
 ## Prerequisites
 
  - Python3 ([Download](https://www.python.org/downloads/))
- - Chrome WebDriver for your version of Google Chrome ([Download](https://chromedriver.chromium.org/downloads))
- - Include the WebDriver location in your PATH environment variable ([Tutorial](https://zwbetz.com/download-chromedriver-binary-and-add-to-your-path-for-automated-functional-testing/))
 
 ## Run the script
 
