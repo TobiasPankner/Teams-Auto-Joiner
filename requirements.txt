@@ -1,2 +1,2 @@
+webdriver_manager==2.5.3
 selenium==3.141.0
-urllib3==1.25.8
