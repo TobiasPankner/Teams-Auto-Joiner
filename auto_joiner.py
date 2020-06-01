@@ -249,7 +249,8 @@ def main():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
-    browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
+    chrome_options.add_argument("--use-fake-ui-for-media-stream")
+    browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     load_config()
 
@@ -286,6 +287,10 @@ def main():
         exit(1)
 
     teams = get_teams()
+    if len(teams) == 0:
+        print("Nothing found, is Teams in list mode?")
+        exit(1)
+
     for team in teams:
         team.init_channels()
         team.check_blacklist()
