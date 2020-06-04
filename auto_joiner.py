@@ -157,7 +157,7 @@ def wait_till_found(sel, timeout):
 def get_teams():
     # find all team names
     team_elems = browser.find_elements_by_css_selector(
-        "ul>li[role='treeitem']>div:not(.ts-tree-header)")
+        "ul>li[role='treeitem']>div[sv-element]")
     team_names = [team_elem.get_attribute("data-tid") for team_elem in team_elems]
     team_names = [team_name[team_name.find('team-') + 5:team_name.rfind("-li")] for team_name in team_names]
 
