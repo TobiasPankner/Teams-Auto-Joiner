@@ -282,6 +282,11 @@ def main():
         if keep_logged_in is not None:
             keep_logged_in.click()
 
+        time.sleep(1)
+        use_web_instead = wait_till_found(".use-app-lnk", 5)
+        if use_web_instead is not None:
+            use_web_instead.click()
+
     print("Waiting for correct page...")
     if wait_till_found("div[data-tid='team-channel-list']", 60 * 5) is None:
         exit(1)
