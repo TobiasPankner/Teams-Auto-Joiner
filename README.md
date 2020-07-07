@@ -20,20 +20,20 @@ Always joins the newest meeting and doesn't leave it unless there is a newer one
    
 ## Configuration options  
   
-email/password:
-: The email/password of your Microsoft account (can be left empty if you don't want to automatically login)  
+- **email/password:**  
+The email/password of your Microsoft account (can be left empty if you don't want to automatically login)  
 
-start_automatically:
-: If true, skips the `Start [s], Reload teams [r], Quit [q]` dialog and starts on it's own. Useful if you schedule the script to start at a specific time.  
+- **start_automatically:**  
+If true, skips the `Start [s], Reload teams [r], Quit [q]` dialog and starts on it's own. Useful if you schedule the script to start at a specific time.  
 
-random_delay:
-: If true, adds a random delay (10s-30s) before joining a meeting. Can be useful so the bot seems more "human like".  
+- **random_delay:**  
+If true, adds a random delay (10s-30s) before joining a meeting. Can be useful so the bot seems more "human like".  
 
-auto_leave_after_min:
-: If set to a value greater than zero, the bot leaves every meeting after the specified time (in minutes). Useful if you know the length of your meeting, if this is left a the default the bot will stay in the meeting until a new one is available.
+- **auto_leave_after_min:**  
+If set to a value greater than zero, the bot leaves every meeting after the specified time (in minutes). Useful if you know the length of your meeting, if this is left a the default the bot will stay in the meeting until a new one is available.
 
-blacklist:
-: A list of Teams and their channels to ignore. Meetings ocurring in these channels will not be joined.  
+- **blacklist:**  
+A list of Teams and their channels to ignore. Meetings ocurring in these channels will not be joined.  
 If you have a Team called "Test1" and, within that, two channels called "General" and "Channel1" and you don't want to join meetings in the "General" Channel: 
 ```json
 "blacklist": [  
