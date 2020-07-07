@@ -58,11 +58,11 @@ class Team:
 
     def expand_channels(self):
         try:
-            elem = self.elem.find_element_by_css_selector("div[class='channels']")
+            elem = self.elem.find_element_by_css_selector("div.channels")
         except exceptions.NoSuchElementException:
             try:
                 self.elem.click()
-                elem = self.elem.find_element_by_css_selector("div[class='channels']")
+                elem = self.elem.find_element_by_css_selector("div.channels")
             except exceptions.NoSuchElementException:
                 return None
         return elem
@@ -150,7 +150,7 @@ class Team:
 
     def update_elem(self):
         self.elem = browser.find_element_by_css_selector(
-            f"ul>li[role='treeitem'][class='match-parent team left-rail-item-kb-l2']>div[data-tid='team-{self.name}-li']")
+            f"ul>li.team[role='treeitem']>div[data-tid='team-{self.name}-li']")
 
 
 def load_config():
@@ -266,6 +266,7 @@ def main():
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
     chrome_options.add_argument("--use-fake-ui-for-media-stream")
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
     browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     load_config()
