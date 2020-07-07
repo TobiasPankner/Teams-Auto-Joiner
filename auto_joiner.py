@@ -128,9 +128,25 @@ class Team:
             # remove duplicates
             meeting_ids = list(dict.fromkeys(meeting_ids))
 
+            all_call_elems = browser.find_elements_by_css_selector(".ts-calling-thread-header")
+
             for meeting_id in meeting_ids:
                 if meeting_id not in [meeting.id for meeting in channel.meetings]:
-                    channel.meetings.append(Meeting(time.time(), meeting_id))
+                    time_started = time.time()
+
+                    # search the corresponding header elem and extract the time
+                    for call_elem in all_call_elems:
+                        try:
+                            call_elem.find_element_by_css_selector(f"calling-join-button > button[track-data*='{meeting_id}'] ")
+                        except exceptions.NoSuchElementException:
+                            continue
+                        else:
+                            header_id = call_elem.get_attribute("id")
+                            if header_id is not None:
+                                time_started = int(header_id.replace("m", "")[:-3])
+                                break
+
+                    channel.meetings.append(Meeting(time_started, meeting_id))
 
     def update_elem(self):
         self.elem = browser.find_element_by_css_selector(
