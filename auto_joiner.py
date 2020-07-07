@@ -109,7 +109,7 @@ class Team:
 
             active_meeting_elem.click()
 
-            if wait_till_found("button[ng-click='ctrl.joinCall()']", 60) is None:
+            if wait_until_found("button[ng-click='ctrl.joinCall()']", 60) is None:
                 continue
 
             join_meeting_elems = browser.find_elements_by_css_selector("button[ng-click='ctrl.joinCall()']")
@@ -143,9 +143,9 @@ def load_config():
         config = json.load(json_data_file)
 
 
-def wait_till_found(sel, timeout):
+def wait_until_found(sel, timeout):
     try:
-        element_present = EC.presence_of_element_located((By.CSS_SELECTOR, sel))
+        element_present = EC.visibility_of_element_located((By.CSS_SELECTOR, sel))
         WebDriverWait(browser, timeout).until(element_present)
 
         return browser.find_element_by_css_selector(sel)
@@ -192,13 +192,13 @@ def join_newest_meeting(teams):
 
     meeting_channel.get_elem(channels_elem).click()
 
-    join_btn = wait_till_found(f"button[track-data*='{meeting_to_join.id}']", 30)
+    join_btn = wait_until_found(f"button[track-data*='{meeting_to_join.id}']", 30)
     if join_btn is None:
         return
 
     join_btn.click()
 
-    join_now_btn = wait_till_found("button[data-tid='prejoin-join-button']", 30)
+    join_now_btn = wait_until_found("button[data-tid='prejoin-join-button']", 30)
     if join_now_btn is None:
         return
 
@@ -257,38 +257,38 @@ def main():
     browser.get("https://teams.microsoft.com")
 
     if config['email'] != "" and config['password'] != "":
-        login_email = wait_till_found("input[type='email']", 30)
+        login_email = wait_until_found("input[type='email']", 30)
         if login_email is not None:
             login_email.send_keys(config['email'])
             time.sleep(1)
 
         # find the element again to avoid StaleElementReferenceException
-        login_email = wait_till_found("input[type='email']", 5)
+        login_email = wait_until_found("input[type='email']", 5)
         if login_email is not None:
             login_email.send_keys(Keys.ENTER)
 
-        login_pwd = wait_till_found("input[type='password']", 30)
+        login_pwd = wait_until_found("input[type='password']", 5)
         if login_pwd is not None:
             login_pwd.send_keys(config['password'])
             time.sleep(1)
 
         # find the element again to avoid StaleElementReferenceException
-        login_pwd = wait_till_found("input[type='password']", 5)
+        login_pwd = wait_until_found("input[type='password']", 5)
         if login_pwd is not None:
             login_pwd.send_keys(Keys.ENTER)
 
         time.sleep(1)
-        keep_logged_in = wait_till_found("input[id='idBtn_Back']", 5)
+        keep_logged_in = wait_until_found("input[id='idBtn_Back']", 5)
         if keep_logged_in is not None:
             keep_logged_in.click()
 
         time.sleep(1)
-        use_web_instead = wait_till_found(".use-app-lnk", 5)
+        use_web_instead = wait_until_found(".use-app-lnk", 5)
         if use_web_instead is not None:
             use_web_instead.click()
 
     print("Waiting for correct page...")
-    if wait_till_found("div[data-tid='team-channel-list']", 60 * 5) is None:
+    if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
         exit(1)
 
     teams = get_teams()
