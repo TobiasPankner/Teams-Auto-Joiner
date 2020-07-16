@@ -32,6 +32,14 @@ If true, adds a random delay (10s-30s) before joining a meeting. Can be useful s
 - **auto_leave_after_min:**  
 If set to a value greater than zero, the bot leaves every meeting after the specified time (in minutes). Useful if you know the length of your meeting, if this is left a the default the bot will stay in the meeting until a new one is available.
 
+- **additional_acc:** 
+if u have addititonal account in same mail or anything similar to given pic 
+<img width="80%" alt="jarray reverse exampl" src="https://i.imgur.com/VPmecz2.png">
+change additional_acc by which no of account u want to select "counting start from 1 here"
+
+- **headless:**
+if ypu want to run code without opening instance of chrome change value to true
+
 - **blacklist:**  
 A list of Teams and their channels to ignore. Meetings ocurring in these channels will not be joined.  
 If you have a Team called "Test1" and, within that, two channels called "General" and "Channel1" and you don't want to join meetings in the "General" Channel: 
