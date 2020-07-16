@@ -169,6 +169,15 @@ def wait_until_found(sel, timeout):
         print("Timeout waiting for element.")
         return None
 
+def wait_until_found_xpath(sel, timeout):
+    try:
+        element_present = EC.visibility_of_element_located((By.XPATH, sel))
+        WebDriverWait(browser, timeout).until(element_present)
+
+        return browser.find_element_by_xpath(sel)
+    except exceptions.TimeoutException:
+        print("Timeout waiting for element.")
+        return None
 
 def get_teams():
     # find all team names
@@ -262,14 +271,18 @@ def hangup():
 def main():
     global browser, config
 
+    load_config()
+
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
     chrome_options.add_argument("--use-fake-ui-for-media-stream")
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
-    load_config()
+    if config['headless'] :
+        chrome_options.add_argument('--headless')
+        print("headless mode enable..")
+    browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     browser.get("https://teams.microsoft.com")
 
@@ -283,7 +296,7 @@ def main():
         login_email = wait_until_found("input[type='email']", 5)
         if login_email is not None:
             login_email.send_keys(Keys.ENTER)
-
+            print("\nWorking...")
         login_pwd = wait_until_found("input[type='password']", 5)
         if login_pwd is not None:
             login_pwd.send_keys(config['password'])
@@ -304,6 +317,17 @@ def main():
         if use_web_instead is not None:
             use_web_instead.click()
 
+    # if u have additioan account some something link https://imgur.com/a/CiifUzF    following will excecute
+    if config['additional_acc']  > 1 :
+        select_change_acc=wait_until_found_xpath("/html/body/div[1]/div[1]/app-header-bar/div/div/button[1]",20)
+        if select_change_acc is not None :
+            select_change_acc.click()
+            time.sleep(1)
+            change_acc = wait_until_found_xpath(f"/html/body/div[5]/div/ul/settings-dropdown-tenants/li[{config['additional_acc']}]/button[1]",20)
+            # /html/body/div[5]/div/ul/settings-dropdown-tenants/li[2] also usable
+            if change_acc is not None :
+                change_acc.click()
+    
     print("Waiting for correct page...")
     if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
         exit(1)
