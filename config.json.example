@@ -4,6 +4,8 @@
   "start_automatically": false,
   "random_delay": false,
   "auto_leave_after_min": -1,
+  "organisation_num" : 1,
+  "headless" : false ,
   "blacklist": [
     {
       "team_name": "Example Team 1",
