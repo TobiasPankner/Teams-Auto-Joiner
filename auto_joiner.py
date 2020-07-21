@@ -262,14 +262,18 @@ def hangup():
 def main():
     global browser, config
 
+    load_config()
+
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
     chrome_options.add_argument("--use-fake-ui-for-media-stream")
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
-    load_config()
+    if config['headless'] :
+        chrome_options.add_argument('--headless')
+        print("Enabled headless mode")
+    browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     browser.get("https://teams.microsoft.com")
 
@@ -304,6 +308,17 @@ def main():
         if use_web_instead is not None:
             use_web_instead.click()
 
+        # if additional organisations are setup in the config file
+    if config['organisation_num']  > 1 :
+        additional_org_num = config['organisation_num']
+        select_change_org=wait_until_found("button.tenant-switcher",20)
+        if select_change_org is not None :
+            select_change_org.click()
+            
+            change_org = wait_until_found(f"li.tenant-option[aria-posinset='{additional_org_num}']",20)
+            if change_org is not None:
+                change_org.click()
+    
     print("Waiting for correct page...")
     if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
         exit(1)
