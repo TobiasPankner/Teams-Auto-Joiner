@@ -273,6 +273,10 @@ def main():
     if 'headless' in config and config['headless']:
         chrome_options.add_argument('--headless')
         print("Enabled headless mode")
+
+    if 'mute_audio' in config and config['mute_audio']:
+        chrome_options.add_argument("--mute-audio")
+
     browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     browser.get("https://teams.microsoft.com")

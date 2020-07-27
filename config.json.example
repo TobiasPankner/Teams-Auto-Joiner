@@ -6,6 +6,7 @@
   "auto_leave_after_min": -1,
   "organisation_num" : 1,
   "headless" : false ,
+  "mute_audio": false,
   "blacklist": [
     {
       "team_name": "Example Team 1",

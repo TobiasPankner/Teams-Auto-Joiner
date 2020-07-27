@@ -39,6 +39,9 @@ If your Teams account is in multiple organisations, as seen in the example below
 - **headless:**     
 If true, runs Chrome in headless mode (does not open GUI window and runs in background).
 
+- **mute_audio:**     
+If true, mutes all the sounds.
+
 - **blacklist:**  
 A list of Teams and their channels to ignore. Meetings ocurring in these channels will not be joined.  
 If you have a Team called "Test1" and, within that, two channels called "General" and "Channel1" and you don't want to join meetings in the "General" Channel: 
