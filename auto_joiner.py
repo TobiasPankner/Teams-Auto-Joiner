@@ -14,15 +14,14 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 browser: webdriver.Chrome = None
 config = None
-active_meeting = None
 uuid_regex = r"\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b"
 hangup_thread: Timer = None
 
 
 class Meeting:
-    def __init__(self, started_at, id):
+    def __init__(self, started_at, meeting_id):
         self.started_at = started_at
-        self.id = id
+        self.meeting_id = meeting_id
 
 
 class Channel:
@@ -131,8 +130,10 @@ class Team:
             all_call_elems = browser.find_elements_by_css_selector(".ts-calling-thread-header")
 
             for meeting_id in meeting_ids:
-                if meeting_id not in [meeting.id for meeting in channel.meetings]:
+                # if the meeting is active or new, do some more things
+                if meeting_id not in [meeting.meeting_id for meeting in channel.meetings] or meeting_id == active_meeting.meeting_id:
                     time_started = time.time()
+                    participants = -1
 
                     # search the corresponding header elem and extract the time
                     for call_elem in all_call_elems:
@@ -144,9 +145,14 @@ class Team:
                             header_id = call_elem.get_attribute("id")
                             if header_id is not None:
                                 time_started = int(header_id.replace("m", "")[:-3])
+                                participants = len(call_elem.find_elements_by_css_selector("div > calling-live-roster > .ts-calling-live-roster > div[role='listitem']"))
                                 break
 
-                    channel.meetings.append(Meeting(time_started, meeting_id))
+                    if meeting_id == active_meeting.meeting_id:
+                        if participants == 1 and 'leave_if_last' in config and config['leave_if_last']:
+                            hangup()
+                    else:
+                        channel.meetings.append(Meeting(time_started, meeting_id))
 
     def update_elem(self):
         self.elem = browser.find_element_by_css_selector(
@@ -208,7 +214,7 @@ def join_newest_meeting(teams):
 
     meeting_channel.get_elem(channels_elem).click()
 
-    join_btn = wait_until_found(f"button[track-data*='{meeting_to_join.id}']", 30)
+    join_btn = wait_until_found(f"button[track-data*='{meeting_to_join.meeting_id}']", 30)
     if join_btn is None:
         return
 
@@ -322,6 +328,7 @@ def main():
             change_org = wait_until_found(f"li.tenant-option[aria-posinset='{additional_org_num}']", 20)
             if change_org is not None:
                 change_org.click()
+                time.sleep(5)
     
     print("Waiting for correct page...")
     if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
@@ -373,4 +380,5 @@ def main():
 
 
 if __name__ == "__main__":
+    active_meeting = Meeting(-1, -1)
     main()

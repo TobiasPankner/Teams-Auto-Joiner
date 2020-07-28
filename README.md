@@ -10,7 +10,7 @@
 Python script to automatically join Microsoft Teams meetings.  
 Automatically turns off your microphone and camera before joining. Automatic login and blacklist can be set in the config file.  
   
-Always joins the newest meeting and doesn't leave it unless there is a newer one or the user gets kicked. Automatically leaving after x minutes can be configured in the config file.  
+Always joins the newest meeting and leaves either after a specified time, if you are the last person in the meeting or only if a new one is available (see [Configuration options](#configuration-options) for more information).
   
 ![Demo](https://imgur.com/VQOJl8w.gif)
 
@@ -31,6 +31,9 @@ If true, adds a random delay (10s-30s) before joining a meeting. Can be useful s
 
 - **auto_leave_after_min:**  
 If set to a value greater than zero, the bot leaves every meeting after the specified time (in minutes). Useful if you know the length of your meeting, if this is left a the default the bot will stay in the meeting until a new one is available.
+
+- **leave_if_last:**  
+If true, leaves the meeting if you are the last person in it.
 
 - **organisation_num:**     
 If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 1)  
