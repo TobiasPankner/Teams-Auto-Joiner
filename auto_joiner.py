@@ -284,14 +284,12 @@ def main():
     if 'mute_audio' in config and config['mute_audio']:
         chrome_options.add_argument("--mute-audio")
 
+    chrome_type = ChromeType.GOOGLE
     if 'chrome_type' in config:
         if config['chrome_type'] == "chromium":
             chrome_type = ChromeType.CHROMIUM
         elif config['chrome_type'] == "msedge":
-            chrome_type = ChromeType.MSEDGE
-    else:
-        chrome_type = ChromeType.GOOGLE
-            
+            chrome_type = ChromeType.MSEDGE     
 
     browser = webdriver.Chrome(ChromeDriverManager(chrome_type=chrome_type).install(), options=chrome_options)
 
