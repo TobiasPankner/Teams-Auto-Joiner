@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.utils import ChromeType
 
 browser: webdriver.Chrome = None
 config = None
@@ -283,7 +284,14 @@ def main():
     if 'mute_audio' in config and config['mute_audio']:
         chrome_options.add_argument("--mute-audio")
 
-    browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    chrome_type = ChromeType.GOOGLE
+    if 'chrome_type' in config:
+        if config['chrome_type'] == "chromium":
+            chrome_type = ChromeType.CHROMIUM
+        elif config['chrome_type'] == "msedge":
+            chrome_type = ChromeType.MSEDGE     
+
+    browser = webdriver.Chrome(ChromeDriverManager(chrome_type=chrome_type).install(), options=chrome_options)
 
     browser.get("https://teams.microsoft.com")
 

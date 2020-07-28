@@ -58,6 +58,10 @@ If you have a Team called "Test1" and, within that, two channels called "General
   }
 ]
 ```
+
+- **chrome_type:**     
+Valid options: `google-chrome`, `chromium`, `msedge`. By default, google chrome is used, but the script can also be used with Chromium or Microsoft Edge.
+
 ## Run the script  
   
  1. Rename the [config.json.example](config.json.example) file to "config.json"  
