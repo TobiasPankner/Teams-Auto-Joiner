@@ -26,6 +26,10 @@ The email/password of your Microsoft account (can be left empty if you don't wan
 - **start_automatically:**  
 If true, skips the `Start [s], Reload teams [r], Quit [q]` dialog and starts on it's own. Useful if you schedule the script to start at a specific time.  
 
+- **organisation_num:**     
+If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 1)  
+<img width="30%" src="https://imgur.com/CWpK4wk.png">
+
 - **random_delay:**  
 If true, adds a random delay (10s-30s) before joining a meeting. Can be useful so the bot seems more "human like".  
 
@@ -35,15 +39,14 @@ If set to a value greater than zero, the bot leaves every meeting after the spec
 - **leave_if_last:**  
 If true, leaves the meeting if you are the last person in it.
 
-- **organisation_num:**     
-If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 1)  
-<img width="30%" src="https://imgur.com/CWpK4wk.png">
-
 - **headless:**     
 If true, runs Chrome in headless mode (does not open GUI window and runs in background).
 
 - **mute_audio:**     
 If true, mutes all the sounds.
+
+- **chrome_type:**     
+Valid options: `google-chrome`, `chromium`, `msedge`. By default, google chrome is used, but the script can also be used with Chromium or Microsoft Edge.
 
 - **blacklist:**  
 A list of Teams and their channels to ignore. Meetings ocurring in these channels will not be joined.  
@@ -58,9 +61,6 @@ If you have a Team called "Test1" and, within that, two channels called "General
   }
 ]
 ```
-
-- **chrome_type:**     
-Valid options: `google-chrome`, `chromium`, `msedge`. By default, google chrome is used, but the script can also be used with Chromium or Microsoft Edge.
 
 ## Run the script  
   
