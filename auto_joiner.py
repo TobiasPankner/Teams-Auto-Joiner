@@ -63,7 +63,7 @@ class Team:
             try:
                 self.elem.click()
                 elem = self.elem.find_element_by_css_selector("div.channels")
-            except exceptions.NoSuchElementException:
+            except (exceptions.NoSuchElementException, exceptions.ElementNotInteractableException):
                 return None
         return elem
 
@@ -128,6 +128,7 @@ class Team:
             # remove duplicates
             meeting_ids = list(dict.fromkeys(meeting_ids))
 
+            time.sleep(1)
             all_call_elems = browser.find_elements_by_css_selector(".ts-calling-thread-header")
 
             for meeting_id in meeting_ids:
@@ -135,6 +136,7 @@ class Team:
                 if meeting_id not in [meeting.meeting_id for meeting in channel.meetings] or meeting_id == active_meeting.meeting_id:
                     time_started = time.time()
                     participants = -1
+                    attendant_upn = None
 
                     # search the corresponding header elem and extract the time
                     for call_elem in all_call_elems:
@@ -146,12 +148,22 @@ class Team:
                             header_id = call_elem.get_attribute("id")
                             if header_id is not None:
                                 time_started = int(header_id.replace("m", "")[:-3])
-                                participants = len(call_elem.find_elements_by_css_selector("div > calling-live-roster > .ts-calling-live-roster > div[role='listitem']"))
+                                participants_elems = call_elem.find_elements_by_css_selector("div > calling-live-roster > .ts-calling-live-roster > div[role='listitem']")
+                                participants = len(participants_elems)
+                                if participants > 0:
+                                    attendant_upn = participants_elems[0].find_element_by_css_selector("profile-picture > img").get_attribute("upn")
                                 break
 
                     if meeting_id == active_meeting.meeting_id:
-                        if participants == 1 and 'leave_if_last' in config and config['leave_if_last']:
-                            hangup()
+                        if 'leave_if_last' in config and config['leave_if_last']:
+                            try:
+                                prof_pic = browser.find_element_by_css_selector("profile-picture > .user-picture:not(.default-profile-image)")
+                            except exceptions.NoSuchElementException:
+                                pass
+                            else:
+                                user_upn = prof_pic.get_attribute("upn")
+                                if participants == 0 or ( participants == 1 and attendant_upn == user_upn):
+                                    hangup()
                     else:
                         channel.meetings.append(Meeting(time_started, meeting_id))
 
@@ -173,7 +185,7 @@ def wait_until_found(sel, timeout):
 
         return browser.find_element_by_css_selector(sel)
     except exceptions.TimeoutException:
-        print("Timeout waiting for element.")
+        print(f"Timeout waiting for element: {sel}")
         return None
 
 
@@ -244,7 +256,13 @@ def join_newest_meeting(teams):
 
     join_now_btn.click()
 
-    browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()
+    browser.execute_script('''window.open("https://teams.microsoft.com","_blank");''')
+    browser.switch_to.window(browser.window_handles[-1])
+
+    if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
+        exit(1)
+
+    # browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()
 
     active_meeting = meeting_to_join
 
@@ -257,8 +275,14 @@ def join_newest_meeting(teams):
 
 def hangup():
     try:
-        hangup_btn = browser.find_element_by_css_selector("button[data-tid='call-hangup']")
-        hangup_btn.click()
+        tabs = browser.window_handles
+        if len(tabs) < 2:
+            return
+
+        browser.switch_to.window(tabs[0])
+
+        browser.close()
+        browser.switch_to.window(browser.window_handles[-1])
 
         if hangup_thread:
             hangup_thread.cancel()
@@ -337,6 +361,10 @@ def main():
             if change_org is not None:
                 change_org.click()
                 time.sleep(5)
+
+                use_web_instead = wait_until_found(".use-app-lnk", 5)
+                if use_web_instead is not None:
+                    use_web_instead.click()
     
     print("Waiting for correct page...")
     if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
