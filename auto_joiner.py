@@ -2,6 +2,7 @@ import json
 import random
 import re
 import time
+import datetime
 from threading import Timer
 
 from selenium import webdriver
@@ -256,6 +257,8 @@ def join_newest_meeting(teams):
 
     join_now_btn.click()
 
+    print(f"Joined meeting: {meeting_team.name} > {meeting_channel.name}")
+
     browser.execute_script('''window.open("https://teams.microsoft.com","_blank");''')
     browser.switch_to.window(browser.window_handles[-1])
 
@@ -277,17 +280,21 @@ def hangup():
     try:
         tabs = browser.window_handles
         if len(tabs) < 2:
-            return
+            return False
 
         browser.switch_to.window(tabs[0])
 
+        print("Left Meeting")
         browser.close()
         browser.switch_to.window(browser.window_handles[-1])
+        time.sleep(2)
 
         if hangup_thread:
             hangup_thread.cancel()
+
+        return True
     except exceptions.NoSuchElementException:
-        return
+        return False
 
 
 def main():
@@ -403,16 +410,17 @@ def main():
 
             selection = input(sel_str).lower()
 
-    print("\nWorking...")
-
     while 1:
-        time.sleep(2)
+        timestamp = datetime.datetime.now()
+        print(f"\n[{timestamp:%H:%M:%S}] Updating channels")
         for team in teams:
             team.update_meetings()
 
         if join_newest_meeting(teams):
             for team in teams:
                 team.update_elem()
+
+        time.sleep(5)
 
 
 if __name__ == "__main__":
