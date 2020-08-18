@@ -308,7 +308,15 @@ def main():
     chrome_options.add_argument("--use-fake-ui-for-media-stream")
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
-    if 'headless' in config and config['headless']:
+    if 'fullscreen' in config and config['fullscreen']:
+        chrome_options.add_argument('--start-fullscreen')
+        print("Starting in full screen")
+            
+    elif 'maximized' in config and config['maximized']:
+        chrome_options.add_argument('--start-maximized')
+        print("Starting in maximized screen")
+            
+    elif 'headless' in config and config['headless']:
         chrome_options.add_argument('--headless')
         print("Enabled headless mode")
 
