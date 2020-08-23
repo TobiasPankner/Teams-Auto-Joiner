@@ -5,6 +5,7 @@
   "start_automatically": false,
   "organisation_num" : 1,
   "random_delay": false,
+  "check_interval": 5,
 
   "auto_leave_after_min": -1,
   "leave_if_last": true,

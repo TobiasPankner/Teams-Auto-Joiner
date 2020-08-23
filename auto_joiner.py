@@ -415,6 +415,10 @@ def main():
 
             selection = input(sel_str).lower()
 
+    check_interval = 5
+    if "check_interval" in config and config['check_interval'] > 1:
+        check_interval = config['check_interval']
+
     while 1:
         timestamp = datetime.datetime.now()
         print(f"\n[{timestamp:%H:%M:%S}] Updating channels")
@@ -425,7 +429,7 @@ def main():
             for team in teams:
                 team.update_elem()
 
-        time.sleep(5)
+        time.sleep(check_interval)
 
 
 if __name__ == "__main__":

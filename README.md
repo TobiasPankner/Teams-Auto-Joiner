@@ -33,6 +33,9 @@ If your Teams account is in multiple organisations, as seen in the example below
 - **random_delay:**  
 If true, adds a random delay (10s-30s) before joining a meeting. Can be useful so the bot seems more "human like".  
 
+- **check_interval:**  
+The amount of seconds to wait before checking for meetings again. Only integer numbers greater than 1 are allowed.
+
 - **auto_leave_after_min:**  
 If set to a value greater than zero, the bot leaves every meeting after the specified time (in minutes). Useful if you know the length of your meeting, if this is left a the default the bot will stay in the meeting until a new one is available.
 
