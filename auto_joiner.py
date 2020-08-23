@@ -324,6 +324,11 @@ def main():
 
     browser = webdriver.Chrome(ChromeDriverManager(chrome_type=chrome_type).install(), options=chrome_options)
 
+    window_size = browser.get_window_size()
+    if window_size['width'] < 950:
+        print("Resized window")
+        browser.set_window_size(950, window_size['height'])
+
     browser.get("https://teams.microsoft.com")
 
     if config['email'] != "" and config['password'] != "":
