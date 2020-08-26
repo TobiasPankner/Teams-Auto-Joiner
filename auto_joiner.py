@@ -363,7 +363,7 @@ def main():
             use_web_instead.click()
 
         time.sleep(1)
-        teams_button= wait_until_found("[aria-label='Teams Toolbar']", 5)
+        teams_button = wait_until_found("button.app-bar-link > ng-include > svg.icons-teams", 5)
         if teams_button is not None:
             teams_button.click()
 
@@ -384,7 +384,7 @@ def main():
                     use_web_instead.click()
 
                 time.sleep(1)
-                teams_button= wait_until_found("[aria-label='Teams Toolbar']", 5)
+                teams_button = wait_until_found("button.app-bar-link > ng-include > svg.icons-teams", 5)
                 if teams_button is not None:
                     teams_button.click()
     
