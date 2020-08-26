@@ -137,7 +137,6 @@ class Team:
                 if meeting_id not in [meeting.meeting_id for meeting in channel.meetings] or meeting_id == active_meeting.meeting_id:
                     time_started = time.time()
                     participants = -1
-                    attendant_upn = None
 
                     # search the corresponding header elem and extract the time
                     for call_elem in all_call_elems:
@@ -149,22 +148,12 @@ class Team:
                             header_id = call_elem.get_attribute("id")
                             if header_id is not None:
                                 time_started = int(header_id.replace("m", "")[:-3])
-                                participants_elems = call_elem.find_elements_by_css_selector("div > calling-live-roster > .ts-calling-live-roster > div[role='listitem']")
-                                participants = len(participants_elems)
-                                if participants > 0:
-                                    attendant_upn = participants_elems[0].find_element_by_css_selector("profile-picture > img").get_attribute("upn")
+                                participants = len(call_elem.find_elements_by_css_selector("div > calling-live-roster > .ts-calling-live-roster > div[role='listitem']"))
                                 break
 
                     if meeting_id == active_meeting.meeting_id:
-                        if 'leave_if_last' in config and config['leave_if_last']:
-                            try:
-                                prof_pic = browser.find_element_by_css_selector("profile-picture > .user-picture:not(.default-profile-image)")
-                            except exceptions.NoSuchElementException:
-                                pass
-                            else:
-                                user_upn = prof_pic.get_attribute("upn")
-                                if participants == 0 or ( participants == 1 and attendant_upn == user_upn):
-                                    hangup()
+                        if participants == 1 and 'leave_if_last' in config and config['leave_if_last']:
+                            hangup()
                     else:
                         channel.meetings.append(Meeting(time_started, meeting_id))
 
@@ -259,13 +248,7 @@ def join_newest_meeting(teams):
 
     print(f"Joined meeting: {meeting_team.name} > {meeting_channel.name}")
 
-    browser.execute_script('''window.open("https://teams.microsoft.com","_blank");''')
-    browser.switch_to.window(browser.window_handles[-1])
-
-    if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
-        exit(1)
-
-    # browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()
+    browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()
 
     active_meeting = meeting_to_join
 
@@ -278,16 +261,10 @@ def join_newest_meeting(teams):
 
 def hangup():
     try:
-        tabs = browser.window_handles
-        if len(tabs) < 2:
-            return False
-
-        browser.switch_to.window(tabs[0])
+        hangup_btn = browser.find_element_by_css_selector("button[data-tid='call-hangup']")
+        hangup_btn.click()
 
         print("Left Meeting")
-        browser.close()
-        browser.switch_to.window(browser.window_handles[-1])
-        time.sleep(2)
 
         if hangup_thread:
             hangup_thread.cancel()
