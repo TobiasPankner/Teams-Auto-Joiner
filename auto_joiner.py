@@ -362,6 +362,11 @@ def main():
         if use_web_instead is not None:
             use_web_instead.click()
 
+        time.sleep(1)
+        teams_button= wait_until_found("[aria-label='Teams Toolbar']", 5)
+        if teams_button is not None:
+            teams_button.click()
+
         # if additional organisations are setup in the config file
     if 'organisation_num' in config and config['organisation_num'] > 1:
         additional_org_num = config['organisation_num']
@@ -377,6 +382,11 @@ def main():
                 use_web_instead = wait_until_found(".use-app-lnk", 5)
                 if use_web_instead is not None:
                     use_web_instead.click()
+
+                time.sleep(1)
+                teams_button= wait_until_found("[aria-label='Teams Toolbar']", 5)
+                if teams_button is not None:
+                    teams_button.click()
     
     print("Waiting for correct page...")
     if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
