@@ -45,11 +45,12 @@ class Channel:
 
 
 class Team:
-    def __init__(self, name, elem, channels=None):
+    def __init__(self, name, elem, index, channels=None):
         if channels is None:
             channels = []
         self.name = name
         self.elem = elem
+        self.index = index
         self.channels = channels
 
     def __str__(self):
@@ -158,8 +159,8 @@ class Team:
                         channel.meetings.append(Meeting(time_started, meeting_id))
 
     def update_elem(self):
-        self.elem = browser.find_element_by_css_selector(
-            f"ul>li.team[role='treeitem']>div[data-tid='team-{self.name}-li']")
+        team_elems = browser.find_elements_by_css_selector("ul>li[role='treeitem']>div[sv-element]")
+        self.elem = team_elems[self.index]
 
 
 def load_config():
@@ -186,7 +187,7 @@ def get_teams():
     team_names = [team_elem.get_attribute("data-tid") for team_elem in team_elems]
     team_names = [team_name[team_name.find('team-') + 5:team_name.rfind("-li")] for team_name in team_names]
 
-    team_list = [Team(team_names[i], team_elems[i], None) for i in range(len(team_elems))]
+    team_list = [Team(team_names[i], team_elems[i], i, None) for i in range(len(team_elems))]
     return team_list
 
 
