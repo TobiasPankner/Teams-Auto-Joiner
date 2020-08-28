@@ -423,4 +423,8 @@ def main():
 
 if __name__ == "__main__":
     active_meeting = Meeting(-1, -1)
-    main()
+    try:
+        main()
+    finally:
+        if hangup_thread is not None:
+            hangup_thread.cancel()
