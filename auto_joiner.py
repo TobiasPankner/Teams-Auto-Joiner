@@ -218,6 +218,7 @@ def join_newest_meeting(teams):
 
     meeting_channel.get_elem(channels_elem).click()
 
+    time.sleep(0.5)
     join_btn = wait_until_found(f"button[track-data*='{meeting_to_join.meeting_id}']", 30)
     if join_btn is None:
         return
