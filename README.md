@@ -23,6 +23,12 @@ Always joins the newest meeting and leaves either after a specified time, if you
 - **email/password:**  
 The email/password of your Microsoft account (can be left empty if you don't want to automatically login)  
 
+- **run_at_time:**  
+Time to start the script at. Input is a string of the hour and minute in 24h format, if you want it to start immediately leave this empty. 
+If a time before the current time is given, the next day is used. Also make sure that "start_automatically" is set to true and that 
+you entered your email and password.  
+For example, if you want the script to start searching meetings at 6 in the morning on the next day, you would input `06:00` in the config.
+
 - **start_automatically:**  
 If true, skips the `Start [s], Reload teams [r], Quit [q]` dialog and starts on it's own. Useful if you schedule the script to start at a specific time.  
 

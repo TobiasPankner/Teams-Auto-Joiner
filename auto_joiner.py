@@ -2,7 +2,7 @@ import json
 import random
 import re
 import time
-import datetime
+from datetime import datetime
 from threading import Timer
 
 from selenium import webdriver
@@ -279,8 +279,6 @@ def hangup():
 def main():
     global browser, config
 
-    load_config()
-
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
@@ -409,7 +407,7 @@ def main():
         check_interval = config['check_interval']
 
     while 1:
-        timestamp = datetime.datetime.now()
+        timestamp = datetime.now()
         print(f"\n[{timestamp:%H:%M:%S}] Updating channels")
         for team in teams:
             team.update_meetings()
@@ -423,6 +421,21 @@ def main():
 
 if __name__ == "__main__":
     active_meeting = Meeting(-1, -1)
+
+    load_config()
+
+    if 'start_at_time' in config and config['start_at_time'] != "":
+        now = datetime.now()
+        run_at = datetime.strptime(config['start_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day)
+
+        if run_at.time() < now.time():
+            run_at = datetime.strptime(config['start_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day + 1)
+
+        delay = (run_at - now).total_seconds()
+
+        print(f"Waiting until {run_at} ({int(delay)}s)")
+        time.sleep(delay)
+
     try:
         main()
     finally:

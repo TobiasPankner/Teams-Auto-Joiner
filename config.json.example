@@ -2,6 +2,8 @@
   "email": "",
   "password": "",
 
+  "run_at_time": "",
+
   "start_automatically": false,
   "organisation_num" : 1,
   "random_delay": false,
