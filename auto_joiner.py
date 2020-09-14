@@ -424,12 +424,12 @@ if __name__ == "__main__":
 
     load_config()
 
-    if 'start_at_time' in config and config['start_at_time'] != "":
+    if 'run_at_time' in config and config['run_at_time'] != "":
         now = datetime.now()
-        run_at = datetime.strptime(config['start_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day)
+        run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day)
 
         if run_at.time() < now.time():
-            run_at = datetime.strptime(config['start_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day + 1)
+            run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day + 1)
 
         delay = (run_at - now).total_seconds()
 
