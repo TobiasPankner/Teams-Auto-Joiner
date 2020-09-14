@@ -298,6 +298,8 @@ def main():
             browser = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install(), options=chrome_options)
         elif config['chrome_type'] == "msedge":
             browser = webdriver.Edge(EdgeChromiumDriverManager().install())
+        else:
+            browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
     else:
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
