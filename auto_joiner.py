@@ -13,6 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.utils import ChromeType
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
 browser: webdriver.Chrome = None
 config = None
@@ -292,14 +293,13 @@ def main():
     if 'mute_audio' in config and config['mute_audio']:
         chrome_options.add_argument("--mute-audio")
 
-    chrome_type = ChromeType.GOOGLE
     if 'chrome_type' in config:
         if config['chrome_type'] == "chromium":
-            chrome_type = ChromeType.CHROMIUM
+            browser = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install(), options=chrome_options)
         elif config['chrome_type'] == "msedge":
-            chrome_type = ChromeType.MSEDGE     
-
-    browser = webdriver.Chrome(ChromeDriverManager(chrome_type=chrome_type).install(), options=chrome_options)
+            browser = webdriver.Edge(EdgeChromiumDriverManager().install())
+    else:
+        browser = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     window_size = browser.get_window_size()
     if window_size['width'] < 950:
