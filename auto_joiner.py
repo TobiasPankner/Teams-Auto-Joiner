@@ -181,6 +181,18 @@ def wait_until_found(sel, timeout):
         return None
 
 
+def switch_to_teams_tab():
+    teams_button = wait_until_found("button.app-bar-link > ng-include > svg.icons-teams", 5)
+    if teams_button is not None:
+        teams_button.click()
+
+
+def switch_to_calendar_tab():
+    calendar_button = wait_until_found("button.app-bar-link > ng-include > svg.icons-calendar", 5)
+    if calendar_button is not None:
+        calendar_button.click()
+
+
 def get_teams():
     # find all team names
     team_elems = browser.find_elements_by_css_selector(
@@ -192,39 +204,8 @@ def get_teams():
     return team_list
 
 
-def join_newest_meeting(teams):
-    global active_meeting, hangup_thread
-
-    meeting_to_join = Meeting(-1, None) if active_meeting is None else active_meeting
-    meeting_team = None
-    meeting_channel = None
-
-    for team in teams:
-        for channel in team.channels:
-            if channel.blacklisted:
-                continue
-
-            for meeting in channel.meetings:
-                if meeting.started_at > meeting_to_join.started_at:
-                    meeting_to_join = meeting
-                    meeting_team = team
-                    meeting_channel = channel
-
-    if meeting_team is None:
-        return False
-
-    hangup()
-
-    channels_elem = meeting_team.expand_channels()
-
-    meeting_channel.get_elem(channels_elem).click()
-
-    time.sleep(0.5)
-    join_btn = wait_until_found(f"button[track-data*='{meeting_to_join.meeting_id}']", 30)
-    if join_btn is None:
-        return
-
-    join_btn.click()
+def join_meeting():
+    global hangup_thread
 
     join_now_btn = wait_until_found("button[data-tid='prejoin-join-button']", 30)
     if join_now_btn is None:
@@ -249,16 +230,81 @@ def join_newest_meeting(teams):
 
     join_now_btn.click()
 
-    print(f"Joined meeting: {meeting_team.name} > {meeting_channel.name}")
-
     browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()
 
-    active_meeting = meeting_to_join
-
     if 'auto_leave_after_min' in config and config['auto_leave_after_min'] > 0:
-        hangup_thread = Timer(config['auto_leave_after_min']*60, hangup)
+        hangup_thread = Timer(config['auto_leave_after_min'] * 60, hangup)
         hangup_thread.start()
 
+
+def join_newest_teams_meeting(teams):
+    global active_meeting
+
+    meeting_to_join = Meeting(-1, None) if active_meeting is None else active_meeting
+    meeting_team = None
+    meeting_channel = None
+
+    for team in teams:
+        for channel in team.channels:
+            if channel.blacklisted:
+                continue
+
+            for meeting in channel.meetings:
+                if meeting.started_at > meeting_to_join.started_at:
+                    meeting_to_join = meeting
+                    meeting_team = team
+                    meeting_channel = channel
+
+    if meeting_team is None:
+        return False
+
+    channels_elem = meeting_team.expand_channels()
+
+    meeting_channel.get_elem(channels_elem).click()
+
+    time.sleep(0.5)
+    join_btn = wait_until_found(f"button[track-data*='{meeting_to_join.meeting_id}']", 30)
+    if join_btn is None:
+        return
+
+    join_btn.click()
+
+    hangup()
+    join_meeting()
+
+    print(f"Joined meeting: {meeting_team.name} > {meeting_channel.name}")
+    active_meeting = meeting_to_join
+
+    return True
+
+
+def join_newest_calendar_meeting():
+    global active_meeting
+
+    active_meetings = browser.find_elements_by_css_selector("div[class*='__activeCall']")
+    if len(active_meetings) == 0:
+        return
+
+    latest_meeting = active_meetings[-1]
+
+    if latest_meeting.get_attribute('id') == active_meeting.meeting_id:
+        return False
+
+    join_meeting_btn = latest_meeting.find_element_by_css_selector("div>button")
+    if join_meeting_btn is None:
+        return False
+
+    try:
+        join_meeting_btn.click()
+    except:
+        return False
+
+    hangup()
+    join_meeting()
+
+    print(f"Joined calendar meeting: {latest_meeting.get_attribute('title')}")
+
+    active_meeting = Meeting(time.time(), latest_meeting.get_attribute('id'))
     return True
 
 
@@ -342,9 +388,7 @@ def main():
             use_web_instead.click()
 
         time.sleep(1)
-        teams_button = wait_until_found("button.app-bar-link > ng-include > svg.icons-teams", 5)
-        if teams_button is not None:
-            teams_button.click()
+        switch_to_teams_tab()
 
         # if additional organisations are setup in the config file
     if 'organisation_num' in config and config['organisation_num'] > 1:
@@ -363,9 +407,7 @@ def main():
                     use_web_instead.click()
 
                 time.sleep(1)
-                teams_button = wait_until_found("button.app-bar-link > ng-include > svg.icons-teams", 5)
-                if teams_button is not None:
-                    teams_button.click()
+                switch_to_teams_tab()
     
     print("Waiting for correct page...")
     if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
@@ -373,8 +415,9 @@ def main():
 
     teams = get_teams()
     if len(teams) == 0:
-        print("Nothing found, is Teams in list mode?")
-        exit(1)
+        if "include_calendar" not in config or not config['include_calendar']:
+            print("Nothing found, is Teams in list mode? (If you only have calendar meetings ignore this)")
+            exit(1)
 
     for team in teams:
         team.init_channels()
@@ -411,12 +454,25 @@ def main():
     while 1:
         timestamp = datetime.now()
         print(f"\n[{timestamp:%H:%M:%S}] Updating channels")
+
+        already_joined = False
+        if "include_calendar" in config and config['include_calendar']:
+            # change to the calendar tab
+            time.sleep(1)
+            switch_to_calendar_tab()
+
+            already_joined = join_newest_calendar_meeting()
+
+        time.sleep(1)
+        switch_to_teams_tab()
+        for team in teams:
+            team.update_elem()
+
         for team in teams:
             team.update_meetings()
 
-        if join_newest_meeting(teams):
-            for team in teams:
-                team.update_elem()
+        if not already_joined:
+            join_newest_teams_meeting(teams)
 
         time.sleep(check_interval)
 
@@ -433,10 +489,10 @@ if __name__ == "__main__":
         if run_at.time() < now.time():
             run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day + 1)
 
-        delay = (run_at - now).total_seconds()
+        start_delay = (run_at - now).total_seconds()
 
-        print(f"Waiting until {run_at} ({int(delay)}s)")
-        time.sleep(delay)
+        print(f"Waiting until {run_at} ({int(start_delay)}s)")
+        time.sleep(start_delay)
 
     try:
         main()
