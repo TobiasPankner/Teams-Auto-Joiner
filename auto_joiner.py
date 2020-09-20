@@ -281,30 +281,36 @@ def join_newest_teams_meeting(teams):
 def join_newest_calendar_meeting():
     global active_meeting
 
-    active_meetings = browser.find_elements_by_css_selector("div[class*='__activeCall']")
-    if len(active_meetings) == 0:
-        return
-
-    latest_meeting = active_meetings[-1]
-
-    if latest_meeting.get_attribute('id') == active_meeting.meeting_id:
+    active_meeting_btns = browser.find_elements_by_css_selector("div[class*='__eventCard'][title] > * button")
+    if len(active_meeting_btns) == 0:
         return False
 
-    join_meeting_btn = latest_meeting.find_element_by_css_selector("div>button")
-    if join_meeting_btn is None:
+    active_meetings = []
+    for active_meeting_btn in active_meeting_btns:
+        active_meetings.append(active_meeting_btn.find_element_by_xpath('../..'))
+
+    print("Found active calendar meetings: ")
+    print([active_meeting.get_attribute("title") for active_meeting in active_meetings])
+
+    meeting_to_join = active_meetings[0]
+    meeting_to_join_btn = active_meeting_btns[0]
+    meeting_title = meeting_to_join.get_attribute('title')
+    meeting_id = meeting_to_join.get_attribute('id')
+
+    if meeting_id == active_meeting.meeting_id:
         return False
 
     try:
-        join_meeting_btn.click()
+        meeting_to_join_btn.click()
     except:
         return False
 
     hangup()
     join_meeting()
 
-    print(f"Joined calendar meeting: {latest_meeting.get_attribute('title')}")
+    print(f"Joined calendar meeting: {meeting_title}")
 
-    active_meeting = Meeting(time.time(), latest_meeting.get_attribute('id'))
+    active_meeting = Meeting(time.time(), meeting_id)
     return True
 
 
@@ -451,6 +457,7 @@ def main():
     if "check_interval" in config and config['check_interval'] > 1:
         check_interval = config['check_interval']
 
+    switched_to_daily_view = False
     while 1:
         timestamp = datetime.now()
         print(f"\n[{timestamp:%H:%M:%S}] Updating channels")
@@ -460,6 +467,22 @@ def main():
             # change to the calendar tab
             time.sleep(1)
             switch_to_calendar_tab()
+
+            if not switched_to_daily_view:
+                view_switcher = wait_until_found("i[data-icon-name='calendarWorkWeekIcon']", 2)
+                if view_switcher is not None:
+                    try:
+                        view_switcher.click()
+                    except:
+                        pass
+                    day_button = wait_until_found("li[role='presentation'].ms-ContextualMenu-item>button[aria-posinset='1']", 2)
+                    if day_button is not None:
+                        try:
+                            day_button.click()
+                            switched_to_daily_view = True
+                            time.sleep(2)
+                        except:
+                            pass
 
             already_joined = join_newest_calendar_meeting()
 
