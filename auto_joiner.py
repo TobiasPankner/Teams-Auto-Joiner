@@ -193,6 +193,13 @@ def switch_to_calendar_tab():
         calendar_button.click()
 
 
+def hide_notifications():
+    try:
+        browser.execute_script("document.getElementById('toast-container').style.display = 'none';")
+    except exceptions.JavascriptException:
+        return
+
+
 def get_teams():
     # find all team names
     team_elems = browser.find_elements_by_css_selector(
@@ -462,6 +469,8 @@ def main():
         timestamp = datetime.now()
         print(f"\n[{timestamp:%H:%M:%S}] Updating channels")
 
+        hide_notifications()
+
         already_joined = False
         if "include_calendar" in config and config['include_calendar']:
             # change to the calendar tab
@@ -469,7 +478,7 @@ def main():
             switch_to_calendar_tab()
 
             if not switched_to_daily_view:
-                view_switcher = wait_until_found("i[data-icon-name='calendarWorkWeekIcon']", 2)
+                view_switcher = wait_until_found("i[data-icon-name='calendarWorkWeekIcon']", 5)
                 if view_switcher is not None:
                     try:
                         view_switcher.click()
