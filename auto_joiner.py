@@ -251,7 +251,7 @@ def join_newest_meeting(teams):
 
     print(f"Joined meeting: {meeting_team.name} > {meeting_channel.name}")
 
-    browser.find_element_by_css_selector("span[data-tid='appBarText-Teams']").click()
+    browser.find_element_by_css_selector("svg.icons-teams").click()
 
     active_meeting = meeting_to_join
 
