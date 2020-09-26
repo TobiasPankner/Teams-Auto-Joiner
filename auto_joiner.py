@@ -2,6 +2,7 @@ import json
 import random
 import re
 import time
+import os
 from datetime import datetime
 from threading import Timer
 
@@ -124,19 +125,19 @@ def init_browser():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
-    chrome_options.add_argument("--use-fake-ui-for-media-stream")
+    chrome_options.add_argument('--use-fake-ui-for-media-stream')
     chrome_options.add_experimental_option('prefs', {
         'credentials_enable_service': False,
-        "profile.default_content_setting_values.media_stream_mic": 1,
-        "profile.default_content_setting_values.media_stream_camera": 1,
-        "profile.default_content_setting_values.geolocation": 1,
-        "profile.default_content_setting_values.notifications": 1,
+        'profile.default_content_setting_values.media_stream_mic': 1,
+        'profile.default_content_setting_values.media_stream_camera': 1,
+        'profile.default_content_setting_values.geolocation': 1,
+        'profile.default_content_setting_values.notifications': 1,
         'profile': {
             'password_manager_enabled': False
         }
     })
 
-    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging', 'enable-automation'])
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
 
     if 'headless' in config and config['headless']:
         chrome_options.add_argument('--headless')
@@ -223,11 +224,16 @@ def prepare_page(include_calendar):
         if view_switcher is not None:
             try:
                 browser.execute_script("arguments[0].click();", view_switcher)
-                # view_switcher.click()
                 time.sleep(2)
             except Exception as e:
                 print(e)
                 return
+
+            day_button = wait_until_found(
+                "li[role='presentation'].ms-ContextualMenu-item>button[aria-posinset='1']", 2, print_error=False)
+            if day_button is None:
+                browser.execute_script("arguments[0].click();", view_switcher)
+                time.sleep(2)
 
             day_button = wait_until_found(
                 "li[role='presentation'].ms-ContextualMenu-item>button[aria-posinset='1']", 2)
@@ -385,11 +391,6 @@ def join_meeting(meeting):
 
     switch_to_teams_tab()
 
-    try:
-        browser.execute_script("document.getElementsByClassName('ts-calling-critical-monitor-alert')[0].remove()")
-    except exceptions.JavascriptException:
-        pass
-
     if 'auto_leave_after_min' in config and config['auto_leave_after_min'] > 0:
         hangup_thread = Timer(config['auto_leave_after_min'] * 60, hangup)
         hangup_thread.start()
@@ -527,5 +528,8 @@ if __name__ == "__main__":
     try:
         main()
     finally:
+        if browser is not None:
+            browser.quit()
+
         if hangup_thread is not None:
             hangup_thread.cancel()
