@@ -284,6 +284,12 @@ def main():
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
     chrome_options.add_argument("--use-fake-ui-for-media-stream")
+    chrome_options.add_experimental_option("prefs", {
+        "profile.default_content_setting_values.media_stream_mic": 0,
+        "profile.default_content_setting_values.media_stream_camera": 0,
+        "profile.default_content_setting_values.geolocation": 0,
+        "profile.default_content_setting_values.notifications": 0
+    })
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     if 'headless' in config and config['headless']:
