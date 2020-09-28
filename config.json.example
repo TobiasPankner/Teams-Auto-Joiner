@@ -4,13 +4,13 @@
 
   "run_at_time": "",
 
+  "meeting_mode": 1,
   "organisation_num" : 1,
   "random_delay": false,
-  "check_interval": 5,
-  "include_calendar": true,
+  "check_interval": 10,
 
   "auto_leave_after_min": -1,
-  "leave_if_last": true,
+  "leave_if_last": false,
 
   "headless" : false,
   "mute_audio": false,

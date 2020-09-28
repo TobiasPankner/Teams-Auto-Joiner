@@ -11,8 +11,7 @@ Python script to automatically join Microsoft Teams meetings.
 Automatically turns off your microphone and camera before joining. Automatic login and blacklist can be set in the config file.  
   
 Always joins the newest meeting and leaves either after a specified time, if you are the last person in the meeting or only if a new one is available (see [Configuration options](#configuration-options) for more information).
-  
-![Demo](https://imgur.com/VQOJl8w.gif)
+
 
 ## Prerequisites  
   
@@ -29,8 +28,11 @@ If a time before the current time is given, the next day is used. Also make sure
 you entered your email and password.  
 For example, if you want the script to start searching meetings at 6 in the morning on the next day, you would input `06:00` in the config.
 
-- **start_automatically:**  
-If true, skips the `Start [s], Reload teams [r], Quit [q]` dialog and starts on it's own. Useful if you schedule the script to start at a specific time.  
+- **meeting_mode:**  
+Change which meetings should be joined. Modes 1, 2 and 3 are available.  
+`1` Both channel and calendar meetings  
+`2` Only channel meetings  
+`3` Only calendar meetings  
 
 - **organisation_num:**     
 If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 1)  
