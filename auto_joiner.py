@@ -23,6 +23,7 @@ current_meeting = None
 already_joined_ids = []
 active_correlation_id = ""
 hangup_thread: Timer = None
+conversation_link = "https://teams.microsoft.com/_#/conversations/a"
 mode = 3
 uuid_regex = r"\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b"
 
@@ -266,7 +267,7 @@ def get_meetings(teams):
     for team in teams:
         for channel in team.channels:
             if channel.has_meeting and not channel.blacklisted:
-                browser.execute_script(f'window.location = "https://teams.microsoft.com/_#/conversations/a?threadId={channel.c_id}&ctx=channel";')
+                browser.execute_script(f'window.location = "{conversation_link}?threadId={channel.c_id}&ctx=channel";')
 
                 meeting_elem = wait_until_found(".ts-calling-thread-header", 10)
                 if meeting_elem is None:
@@ -447,7 +448,7 @@ def hangup():
 
 
 def main():
-    global config, meetings, mode
+    global config, meetings, mode, conversation_link
 
     mode = 1
     if "meeting_mode" in config and 0 < config["meeting_mode"] < 4:
@@ -503,6 +504,11 @@ def main():
 
     if mode != 3:
         switch_to_teams_tab()
+
+        url = browser.current_url
+        url = url[url.find("?")+1:]
+        conversation_link = url
+
         teams = get_all_teams()
 
         if len(teams) == 0:
