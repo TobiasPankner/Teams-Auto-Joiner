@@ -23,6 +23,7 @@ current_meeting = None
 already_joined_ids = []
 active_correlation_id = ""
 hangup_thread: Timer = None
+mode = 3
 uuid_regex = r"\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b"
 
 
@@ -110,7 +111,7 @@ class Meeting:
         self.calendar_meeting = calendar_meeting
 
     def __str__(self):
-        return f"{self.title} {self.time_started}" + (" [Calendar]" if self.calendar_meeting else " [Channel]")
+        return f"\t{self.title} {self.time_started}" + (" [Calendar]" if self.calendar_meeting else " [Channel]")
 
 
 def load_config():
@@ -264,7 +265,7 @@ def get_meetings(teams):
 
     for team in teams:
         for channel in team.channels:
-            if channel.has_meeting:
+            if channel.has_meeting and not channel.blacklisted:
                 browser.execute_script(f'window.location = "https://teams.microsoft.com/_#/conversations/a?threadId={channel.c_id}&ctx=channel";')
 
                 meeting_elem = wait_until_found(".ts-calling-thread-header", 10)
@@ -389,11 +390,39 @@ def join_meeting(meeting):
     current_meeting = meeting
     already_joined_ids.append(meeting.m_id)
 
-    switch_to_teams_tab()
+    print(f"Joined meeting: {meeting.title}")
+
+    if mode != 3:
+        switch_to_teams_tab()
+    else:
+        switch_to_calendar_tab()
 
     if 'auto_leave_after_min' in config and config['auto_leave_after_min'] > 0:
         hangup_thread = Timer(config['auto_leave_after_min'] * 60, hangup)
         hangup_thread.start()
+
+
+def get_meeting_members():
+    meeting_elems = browser.find_elements_by_css_selector(".one-call")
+    for meeting_elem in meeting_elems:
+        try:
+            meeting_elem.click()
+            break
+        except:
+            continue
+
+    time.sleep(2)
+    browser.execute_script("document.getElementById('roster-button').click()")
+    wait_until_found(".ts-meeting-panel-components:not(.hide-meetings-panel)", 5, print_error=False)
+
+    participants = browser.find_elements_by_css_selector("calling-roster-section[ng-show*='participantsInCall'] li.vs-repeat-repeated-element")
+
+    if mode != 3:
+        switch_to_teams_tab()
+    else:
+        switch_to_calendar_tab()
+
+    return len(participants)
 
 
 def hangup():
@@ -418,7 +447,11 @@ def hangup():
 
 
 def main():
-    global config, meetings
+    global config, meetings, mode
+
+    mode = 1
+    if "meeting_mode" in config and 0 < config["meeting_mode"] < 4:
+        mode = config["meeting_mode"]
 
     init_browser()
 
@@ -463,39 +496,45 @@ def main():
     # wait a bit so the meetings are initialized
     time.sleep(5)
 
-    prepare_page(include_calendar=config['include_calendar'])
+    if mode != 2:
+        prepare_page(include_calendar=True)
+    else:
+        prepare_page(include_calendar=False)
 
-    switch_to_teams_tab()
-    teams = get_all_teams()
+    if mode != 3:
+        switch_to_teams_tab()
+        teams = get_all_teams()
 
-    if len(teams) == 0:
-        print("Not Teams found, is MS Teams in list mode? (If you only have calendar meetings ignore this)")
-        if "include_calendar" not in config or not config['include_calendar']:
+        if len(teams) == 0:
+            print("Not Teams found, is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
             exit(1)
 
-    print()
-    for team in teams:
-        print(team)
+        print()
+        for team in teams:
+            print(team)
 
     check_interval = 10
     if "check_interval" in config and config['check_interval'] > 1:
         check_interval = config['check_interval']
 
+    interval_count = 0
     while 1:
         timestamp = datetime.now()
         print(f"\n[{timestamp:%H:%M:%S}] Looking for new meetings")
 
-        switch_to_teams_tab()
-        teams = get_all_teams()
+        if mode != 3:
+            switch_to_teams_tab()
+            teams = get_all_teams()
 
-        if len(teams) == 0:
-            print("Nothing found, is Teams in list mode? (If you only have calendar meetings ignore this)")
-            exit(1)
+            if len(teams) == 0:
+                print("Nothing found, is Teams in list mode?")
+                exit(1)
+            else:
+                get_meetings(teams)
 
-        get_meetings(teams)
-
-        switch_to_calendar_tab()
-        get_calendar_meetings()
+        if mode != 2:
+            switch_to_calendar_tab()
+            get_calendar_meetings()
 
         if len(meetings) > 0:
             print("Found meetings: ")
@@ -507,6 +546,17 @@ def main():
                 join_meeting(meeting_to_join)
 
         meetings = []
+
+        if "leave_if_last" in config and config['leave_if_last'] and interval_count % 5 == 0 and interval_count > 0:
+            if current_meeting is not None:
+                members = get_meeting_members()
+
+                if members <= 1:
+                    hangup()
+                    interval_count = 0
+
+        interval_count += 1
+
         time.sleep(check_interval)
 
 
