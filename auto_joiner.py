@@ -490,7 +490,7 @@ def main():
         change_organisation(config['organisation_num'])
 
     print("Waiting for correct page...", end='')
-    if wait_until_found("#teams-app-bar']", 60 * 5) is None:
+    if wait_until_found("#teams-app-bar", 60 * 5) is None:
         exit(1)
 
     print("\rFound page, do not click anything on the webpage from now on.")
@@ -506,7 +506,7 @@ def main():
         switch_to_teams_tab()
 
         url = browser.current_url
-        url = url[url.find("?")+1:]
+        url = url[:url.find("?")]
         conversation_link = url
 
         teams = get_all_teams()
