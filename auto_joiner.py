@@ -489,7 +489,7 @@ def main():
         change_organisation(config['organisation_num'])
 
     print("Waiting for correct page...", end='')
-    if wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
+    if wait_until_found("#teams-app-bar']", 60 * 5) is None:
         exit(1)
 
     print("\rFound page, do not click anything on the webpage from now on.")
