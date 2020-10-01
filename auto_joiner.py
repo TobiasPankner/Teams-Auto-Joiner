@@ -2,7 +2,6 @@ import json
 import random
 import re
 import time
-import os
 from datetime import datetime
 from threading import Timer
 
@@ -106,11 +105,12 @@ class Channel:
 
 
 class Meeting:
-    def __init__(self, m_id, time_started, title, calendar_meeting=False):
+    def __init__(self, m_id, time_started, title, calendar_meeting=False, channel_id=None):
         self.m_id = m_id
         self.time_started = time_started
         self.title = title
         self.calendar_meeting = calendar_meeting
+        self.channel_id = channel_id
 
     def __str__(self):
         return f"\t{self.title} {self.time_started}" + (" [Calendar]" if self.calendar_meeting else " [Channel]")
@@ -278,12 +278,12 @@ def get_meetings(teams):
     for team in teams:
         for channel in team.channels:
             if channel.has_meeting and not channel.blacklisted:
-                browser.execute_script(f'window.location = "{conversation_link}?threadId={channel.c_id}&ctx=channel";')
+                browser.execute_script(f'window.location = "{conversation_link}a?threadId={channel.c_id}&ctx=channel";')
+                switch_to_teams_tab()
 
                 meeting_elem = wait_until_found(".ts-calling-thread-header", 10)
                 if meeting_elem is None:
                     continue
-
                 meeting_elems = browser.find_elements_by_css_selector(".ts-calling-thread-header")
                 for meeting_elem in meeting_elems:
                     meeting_id = meeting_elem.get_attribute("id")
@@ -294,7 +294,7 @@ def get_meetings(teams):
                     if active_correlation_id != "" and correlation_id.find(active_correlation_id) != -1:
                         continue
 
-                    meetings.append(Meeting(meeting_id, time_started, f"{team.name} -> {channel.name}"))
+                    meetings.append(Meeting(meeting_id, time_started, f"{team.name} -> {channel.name}", channel_id=channel.c_id))
 
 
 def get_calendar_meetings():
@@ -357,14 +357,17 @@ def join_meeting(meeting):
     if meeting.calendar_meeting:
         switch_to_calendar_tab()
         join_btn = wait_until_found(f"div[id='{meeting.m_id}'] > div > button", 5)
-        if join_btn is None:
-            return
-
-        browser.execute_script("arguments[0].click()", join_btn)
-        # join_btn.click()
 
     else:
-        browser.execute_script(f"window.location = 'https://teams.microsoft.com/_#/pre-join-calling/{meeting.m_id}';")
+        browser.execute_script(f'window.location = "{conversation_link}a?threadId={meeting.channel_id}&ctx=channel";')
+        switch_to_teams_tab()
+
+        join_btn = wait_until_found(f"div[id='{meeting.m_id}'] > calling-join-button > button", 5)
+
+    if join_btn is None:
+        return
+
+    browser.execute_script("arguments[0].click()", join_btn)
 
     join_now_btn = wait_until_found("button[data-tid='prejoin-join-button']", 30)
     if join_now_btn is None:
@@ -375,7 +378,6 @@ def join_meeting(meeting):
         active_correlation_id = uuid.group(0)
     else:
         active_correlation_id = ""
-
     # turn camera off
     video_btn = browser.find_element_by_css_selector("toggle-button[data-tid='toggle-video']>div>button")
     video_is_on = video_btn.get_attribute("aria-pressed")
@@ -517,7 +519,7 @@ def main():
         switch_to_teams_tab()
 
         url = browser.current_url
-        url = url[:url.find("?")]
+        url = url[:url.find("conversations/")+14]
         conversation_link = url
 
         teams = get_all_teams()
