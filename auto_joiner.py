@@ -383,12 +383,14 @@ def join_meeting(meeting):
     video_is_on = video_btn.get_attribute("aria-pressed")
     if video_is_on == "true":
         video_btn.click()
+        print("Video off")
 
     # turn mic off
     audio_btn = browser.find_element_by_css_selector("toggle-button[data-tid='toggle-mute']>div>button")
     audio_is_on = audio_btn.get_attribute("aria-pressed")
     if audio_is_on == "true":
         audio_btn.click()
+        print("Audio off")
 
     if 'random_delay' in config and config['random_delay']:
         delay = random.randrange(10, 31, 1)
@@ -493,6 +495,8 @@ def main():
         keep_logged_in = wait_until_found("input[id='idBtn_Back']", 5)
         if keep_logged_in is not None:
             keep_logged_in.click()
+        else:
+            print("Login Unsuccessful, recheck entries in config.json")
 
         use_web_instead = wait_until_found(".use-app-lnk", 5, print_error=False)
         if use_web_instead is not None:
@@ -570,8 +574,9 @@ def main():
             if current_meeting is not None:
                 members = get_meeting_members()
 
-                if members <= 1:
+                if members <= 2:
                     hangup()
+                    print("Last attendee in meeting")
                     interval_count = 0
 
         interval_count += 1
