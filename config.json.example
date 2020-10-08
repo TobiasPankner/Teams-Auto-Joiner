@@ -29,5 +29,6 @@
       "channel_names": [
       ]
     }
-  ]
+  ],
+  "blacklist_meeting_re": ""
 }

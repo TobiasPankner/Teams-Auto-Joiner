@@ -92,7 +92,6 @@ class Team:
                 if channel.name in blacklist_item['channel_names']:
                     channel.blacklisted = True
 
-
 class Channel:
     def __init__(self, name, c_id, blacklisted=False, has_meeting=False):
         self.name = name
@@ -105,16 +104,23 @@ class Channel:
 
 
 class Meeting:
-    def __init__(self, m_id, time_started, title, calendar_meeting=False, channel_id=None):
+    def __init__(self, m_id, time_started, title, calendar_meeting=False, blacklisted = False, channel_id=None):
         self.m_id = m_id
         self.time_started = time_started
         self.title = title
         self.calendar_meeting = calendar_meeting
+        self.calendar_blacklisted = calendar_meeting and self.check_blacklist_calendar_meeting(title)
         self.channel_id = channel_id
 
     def __str__(self):
-        return f"\t{self.title} {self.time_started}" + (" [Calendar]" if self.calendar_meeting else " [Channel]")
+        return f"\t{self.title} {self.time_started}" + (" [Calendar]" if self.calendar_meeting else " [Channel]") + (" [BLACKLISTED]" if self.calendar_blacklisted else "")
 
+    def check_blacklist_calendar_meeting(self, title):
+        regex = config['blacklist_calendar_re']
+        # empty regex matches everything but we don't want it
+        if len(regex) == 0:
+            return False
+        return True if re.search(regex, title) else False
 
 def load_config():
     global config
@@ -330,7 +336,6 @@ def get_calendar_meetings():
 
         meetings.append(Meeting(meeting_id, start_time, meeting_name, calendar_meeting=True))
 
-
 def decide_meeting():
     newest_meetings = []
 
@@ -353,6 +358,10 @@ def join_meeting(meeting):
     global hangup_thread, current_meeting, already_joined_ids, active_correlation_id
 
     hangup()
+
+    if meeting.calendar_blacklisted:
+        print(f"Blacklisted calendar meeting {meeting.title}, skipping...")
+        return
 
     if meeting.calendar_meeting:
         switch_to_calendar_tab()
