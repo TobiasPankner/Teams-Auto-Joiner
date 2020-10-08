@@ -360,7 +360,6 @@ def join_meeting(meeting):
     hangup()
 
     if meeting.calendar_blacklisted:
-        print(f"Blacklisted calendar meeting {meeting.title}, skipping...")
         return
 
     if meeting.calendar_meeting:
