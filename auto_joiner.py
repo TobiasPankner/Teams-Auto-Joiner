@@ -339,6 +339,10 @@ def get_calendar_meetings():
 def decide_meeting():
     newest_meetings = []
 
+    meetings = [x for x in meetings if not x.calendar_blacklisted]
+    if len(meetings) == 0:
+        return
+    
     meetings.sort(key=lambda x: x.time_started, reverse=True)
     newest_time = meetings[0].time_started
 
@@ -358,9 +362,6 @@ def join_meeting(meeting):
     global hangup_thread, current_meeting, already_joined_ids, active_correlation_id
 
     hangup()
-
-    if meeting.calendar_blacklisted:
-        return
 
     if meeting.calendar_meeting:
         switch_to_calendar_tab()
