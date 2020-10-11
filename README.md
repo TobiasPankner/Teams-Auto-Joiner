@@ -71,6 +71,11 @@ If you have a Team called "Test1" and, within that, two channels called "General
   }
 ]
 ```
+
+- **blacklist_meeting_re:**
+If calendar meeting title matches a regular expression, it goes to blacklist
+Leave empty to attend to all meetings
+
 If you want to blacklist all the channels in a team, leave the square brackets empty: `"channel_names": []`.
 
 ## Run the script
