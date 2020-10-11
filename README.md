@@ -28,10 +28,10 @@ If a time before the current time is given, the next day is used. Also make sure
 For example, if you want the script to start searching meetings at 6 in the morning on the next day, you would input `06:00` in the config.
 
 - **meeting_mode:**
-Change which meetings should be joined. Modes 1, 2 and 3 are available.
-`1` Both channel and calendar meetings
-`2` Only channel meetings
-`3` Only calendar meetings
+Change which meetings should be joined. Modes 1, 2 and 3 are available.  
+`1` Both channel and calendar meetings  
+`2` Only channel meetings  
+`3` Only calendar meetings  
 
 - **organisation_num:**
 If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 1)
