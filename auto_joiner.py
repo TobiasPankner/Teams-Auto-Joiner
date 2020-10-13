@@ -64,7 +64,8 @@ class Team:
         channels = self.get_elem().find_elements_by_css_selector(".channels > ul > ng-include > li")
 
         channel_names = [channel.get_attribute("data-tid") for channel in channels]
-        channel_names = [channel_name[channel_name.find("channel-") + 8:channel_name.find("-li")] for channel_name in channel_names if channel_name is not None]
+        channel_names = [channel_name[channel_name.find("channel-") + 8:channel_name.find("-li")] for channel_name in
+                         channel_names if channel_name is not None]
 
         channels_ids = [channel.get_attribute("id").replace("channel-", "") for channel in channels]
 
@@ -76,7 +77,8 @@ class Team:
             except exceptions.NoSuchElementException:
                 meeting_states.append(False)
 
-        self.channels = [Channel(channel_names[i], channels_ids[i], has_meeting=meeting_states[i]) for i in range(len(channel_names))]
+        self.channels = [Channel(channel_names[i], channels_ids[i], has_meeting=meeting_states[i]) for i in
+                         range(len(channel_names))]
 
     def check_blacklist(self):
         blacklist = config['blacklist']
@@ -92,6 +94,7 @@ class Team:
                 if channel.name in blacklist_item['channel_names']:
                     channel.blacklisted = True
 
+
 class Channel:
     def __init__(self, name, c_id, blacklisted=False, has_meeting=False):
         self.name = name
@@ -104,23 +107,24 @@ class Channel:
 
 
 class Meeting:
-    def __init__(self, m_id, time_started, title, calendar_meeting=False, blacklisted = False, channel_id=None):
+    def __init__(self, m_id, time_started, title, calendar_meeting=False, channel_id=None):
         self.m_id = m_id
         self.time_started = time_started
         self.title = title
         self.calendar_meeting = calendar_meeting
-        self.calendar_blacklisted = calendar_meeting and self.check_blacklist_calendar_meeting(title)
+        self.calendar_blacklisted = calendar_meeting and self.check_blacklist_calendar_meeting()
         self.channel_id = channel_id
 
-    def __str__(self):
-        return f"\t{self.title} {self.time_started}" + (" [Calendar]" if self.calendar_meeting else " [Channel]") + (" [BLACKLISTED]" if self.calendar_blacklisted else "")
+    def check_blacklist_calendar_meeting(self):
+        if "blacklist_meeting_re" in config and config['blacklist_meeting_re'] != "":
 
-    def check_blacklist_calendar_meeting(self, title):
-        regex = config['blacklist_calendar_re']
-        # empty regex matches everything but we don't want it
-        if len(regex) == 0:
-            return False
-        return True if re.search(regex, title) else False
+            regex = config['blacklist_meeting_re']
+            return True if re.search(regex, self.title) else False
+
+    def __str__(self):
+        return f"\t{self.title} {self.time_started}" + (" [Calendar]" if self.calendar_meeting else " [Channel]") + (
+            " [BLACKLISTED]" if self.calendar_blacklisted else "")
+
 
 def load_config():
     global config
@@ -296,11 +300,13 @@ def get_meetings(teams):
                     time_started = int(meeting_id.replace("m", "")[:-3])
 
                     # already joined calendar meeting
-                    correlation_id = meeting_elem.find_element_by_css_selector("calling-join-button > button").get_attribute("track-data")
+                    correlation_id = meeting_elem.find_element_by_css_selector(
+                        "calling-join-button > button").get_attribute("track-data")
                     if active_correlation_id != "" and correlation_id.find(active_correlation_id) != -1:
                         continue
 
-                    meetings.append(Meeting(meeting_id, time_started, f"{team.name} -> {channel.name}", channel_id=channel.c_id))
+                    meetings.append(
+                        Meeting(meeting_id, time_started, f"{team.name} -> {channel.name}", channel_id=channel.c_id))
 
 
 def get_calendar_meetings():
@@ -336,13 +342,16 @@ def get_calendar_meetings():
 
         meetings.append(Meeting(meeting_id, start_time, meeting_name, calendar_meeting=True))
 
+
 def decide_meeting():
+    global meetings
+
     newest_meetings = []
 
-    meetings = [x for x in meetings if not x.calendar_blacklisted]
+    meetings = [meeting for meeting in meetings if not meeting.calendar_blacklisted]
     if len(meetings) == 0:
         return
-    
+
     meetings.sort(key=lambda x: x.time_started, reverse=True)
     newest_time = meetings[0].time_started
 
@@ -352,7 +361,9 @@ def decide_meeting():
         else:
             break
 
-    if (current_meeting is None or newest_meetings[0].time_started > current_meeting.time_started) and (current_meeting is None or newest_meetings[0].m_id != current_meeting.m_id) and newest_meetings[0].m_id not in already_joined_ids:
+    if (current_meeting is None or newest_meetings[0].time_started > current_meeting.time_started) and (
+            current_meeting is None or newest_meetings[0].m_id != current_meeting.m_id) and newest_meetings[
+        0].m_id not in already_joined_ids:
         return newest_meetings[0]
 
     return
@@ -437,10 +448,15 @@ def get_meeting_members():
             continue
 
     time.sleep(2)
-    browser.execute_script("document.getElementById('roster-button').click()")
+    try:
+        browser.execute_script("document.getElementById('roster-button').click()")
+    except exceptions.JavascriptException:
+        print("Exception")
+        return
     wait_until_found(".ts-meeting-panel-components:not(.hide-meetings-panel)", 5, print_error=False)
 
-    participants = browser.find_elements_by_css_selector("calling-roster-section[ng-show*='participantsInCall'] li.vs-repeat-repeated-element")
+    participants = browser.find_elements_by_css_selector(
+        "calling-roster-section[ng-show*='participantsInCall'] li.vs-repeat-repeated-element")
 
     if mode != 3:
         switch_to_teams_tab()
@@ -532,7 +548,7 @@ def main():
         switch_to_teams_tab()
 
         url = browser.current_url
-        url = url[:url.find("conversations/")+14]
+        url = url[:url.find("conversations/") + 14]
         conversation_link = url
 
         teams = get_all_teams()
@@ -584,8 +600,8 @@ def main():
                 members = get_meeting_members()
 
                 if 0 < members <= 2:
-                    hangup()
                     print("Last attendee in meeting")
+                    hangup()
                     interval_count = 0
 
         interval_count += 1
@@ -601,7 +617,8 @@ if __name__ == "__main__":
         run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day)
 
         if run_at.time() < now.time():
-            run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day + 1)
+            run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month,
+                                                                               day=now.day + 1)
 
         start_delay = (run_at - now).total_seconds()
 

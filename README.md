@@ -59,7 +59,7 @@ If true, mutes all the sounds.
 Valid options: `google-chrome`, `chromium`, `msedge`. By default, google chrome is used, but the script can also be used with Chromium or Microsoft Edge.
 
 - **blacklist:**
-A list of Teams and their channels to ignore. Meetings ocurring in these channels will not be joined.
+A list of Teams and their channels to ignore. Meetings ocurring in these channels w**ill not be joined.
 If you have a Team called "Test1" and, within that, two channels called "General" and "Channel1" and you don't want to join meetings in the "General" Channel:
 ```json
 "blacklist": [
@@ -73,8 +73,8 @@ If you have a Team called "Test1" and, within that, two channels called "General
 ```
 
 - **blacklist_meeting_re:**
-If calendar meeting title matches a regular expression, it goes to blacklist
-Leave empty to attend to all meetings
+If calendar meeting title matches a regular expression, it goes to blacklist.
+Leave empty to attend to all meetings.
 
 If you want to blacklist all the channels in a team, leave the square brackets empty: `"channel_names": []`.
 
