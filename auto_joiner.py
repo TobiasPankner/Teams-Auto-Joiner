@@ -244,6 +244,7 @@ def prepare_page(include_calendar):
         switch_to_calendar_tab()
 
         view_switcher = wait_until_found(".ms-CommandBar-secondaryCommand > div > button[class*='__topBarContent']", 5)
+
         if view_switcher is not None:
             try:
                 browser.execute_script("arguments[0].click();", view_switcher)
@@ -448,22 +449,28 @@ def get_meeting_members():
             continue
 
     time.sleep(2)
-    try:
-        browser.execute_script("document.getElementById('roster-button').click()")
-    except exceptions.JavascriptException:
-        print("Exception")
-        return
-    wait_until_found(".ts-meeting-panel-components:not(.hide-meetings-panel)", 5, print_error=False)
+    browser.execute_script("document.getElementById('roster-button').click()")
 
-    participants = browser.find_elements_by_css_selector(
-        "calling-roster-section[ng-show*='participantsInCall'] li.vs-repeat-repeated-element")
+    time.sleep(2)
+    participants_elem = browser.find_element_by_css_selector("calling-roster-section[section-key='participantsInCall'] .roster-list-title")
+    attendees_elem = browser.find_element_by_css_selector("calling-roster-section[section-key='attendeesInMeeting'] .roster-list-title")
+
+    if participants_elem is not None:
+        participants = [int(s) for s in participants_elem.get_attribute("aria-label").split() if s.isdigit()]
+    else:
+        participants = 0
+
+    if attendees_elem is not None:
+        attendees = [int(s) for s in attendees_elem.get_attribute("aria-label").split() if s.isdigit()]
+    else:
+        attendees = 0
 
     if mode != 3:
         switch_to_teams_tab()
     else:
         switch_to_calendar_tab()
 
-    return len(participants)
+    return sum(participants + attendees)
 
 
 def hangup():
