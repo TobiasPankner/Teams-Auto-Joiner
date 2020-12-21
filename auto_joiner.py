@@ -155,6 +155,7 @@ def init_browser():
             'password_manager_enabled': False
         }
     })
+    chrome_options.add_argument('--no-sandbox')
 
     chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
 
