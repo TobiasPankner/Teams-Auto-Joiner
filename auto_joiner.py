@@ -449,7 +449,11 @@ def get_meeting_members():
             continue
 
     time.sleep(2)
-    browser.execute_script("document.getElementById('roster-button').click()")
+    try:
+        browser.execute_script("document.getElementById('roster-button').click()")
+    except exceptions.JavascriptException:
+        print("Failed to get meeting members")
+        return 99
 
     time.sleep(2)
     participants_elem = browser.find_element_by_css_selector("calling-roster-section[section-key='participantsInCall'] .roster-list-title")
