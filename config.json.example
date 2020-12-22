@@ -11,6 +11,7 @@
 
   "auto_leave_after_min": -1,
   "leave_if_last": false,
+  "pause_search": false,
 
   "headless" : false,
   "mute_audio": false,

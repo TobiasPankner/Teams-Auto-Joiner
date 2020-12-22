@@ -49,6 +49,10 @@ If set to a value greater than zero, the bot leaves every meeting after the spec
 - **leave_if_last:**
 If true, leaves the meeting if you are the last person in it.
 
+- **pause_search:**
+If true, doesn't search for new meetings while there is one active. Keep in mind to set auto_leave_after_min or leave_if_last,
+otherwise the bot will not search for meetings again.
+
 - **headless:**
 If true, runs Chrome in headless mode (does not open GUI window and runs in background).
 

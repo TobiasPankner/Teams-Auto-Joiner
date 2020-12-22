@@ -56,7 +56,7 @@ class Team:
             try:
                 self.get_elem().click()
                 self.get_elem().find_element_by_css_selector("div.channels")
-            except (exceptions.NoSuchElementException, exceptions.ElementNotInteractableException):
+            except (exceptions.NoSuchElementException, exceptions.ElementNotInteractableException, exceptions.ElementClickInterceptedException):
                 return None
 
     def get_channels(self):
@@ -582,28 +582,31 @@ def main():
         timestamp = datetime.now()
         print(f"\n[{timestamp:%H:%M:%S}] Looking for new meetings")
 
-        if mode != 3:
-            switch_to_teams_tab()
-            teams = get_all_teams()
+        if "pause_search" in config and config['pause_search'] and current_meeting is not None:
+            print("Meeting search os paused because you are still in a meeting")
+        else:
+            if mode != 3:
+                switch_to_teams_tab()
+                teams = get_all_teams()
 
-            if len(teams) == 0:
-                print("Nothing found, is Teams in list mode?")
-                exit(1)
-            else:
-                get_meetings(teams)
+                if len(teams) == 0:
+                    print("Nothing found, is Teams in list mode?")
+                    exit(1)
+                else:
+                    get_meetings(teams)
 
-        if mode != 2:
-            switch_to_calendar_tab()
-            get_calendar_meetings()
+            if mode != 2:
+                switch_to_calendar_tab()
+                get_calendar_meetings()
 
-        if len(meetings) > 0:
-            print("Found meetings: ")
-            for meeting in meetings:
-                print(meeting)
+            if len(meetings) > 0:
+                print("Found meetings: ")
+                for meeting in meetings:
+                    print(meeting)
 
-            meeting_to_join = decide_meeting()
-            if meeting_to_join is not None:
-                join_meeting(meeting_to_join)
+                meeting_to_join = decide_meeting()
+                if meeting_to_join is not None:
+                    join_meeting(meeting_to_join)
 
         meetings = []
 
