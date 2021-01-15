@@ -1,22 +1,18 @@
 {
   "email": "",
   "password": "",
-
   "run_at_time": "",
-
   "meeting_mode": 1,
-  "organisation_num" : 1,
+  "organisation_num": 1,
   "random_delay": false,
   "check_interval": 10,
-
   "auto_leave_after_min": -1,
-  "leave_if_last": false,
+  "leave_if_last": true,
+  "leave_threshold_number": "",
   "pause_search": false,
-
-  "headless" : false,
+  "headless": false,
   "mute_audio": false,
   "chrome_type": "google-chrome",
-
   "blacklist": [
     {
       "team_name": "Example Team 1",
@@ -25,10 +21,9 @@
         "Second Channel to blacklist"
       ]
     },
-     {
+    {
       "team_name": "Blacklist whole team",
-      "channel_names": [
-      ]
+      "channel_names": []
     }
   ],
   "blacklist_meeting_re": ""

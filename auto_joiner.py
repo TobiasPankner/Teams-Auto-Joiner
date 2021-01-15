@@ -447,14 +447,14 @@ def get_meeting_members():
             meeting_elem.click()
             break
         except:
-            continue
+            pass
 
     time.sleep(2)
     try:
         browser.execute_script("document.getElementById('roster-button').click()")
     except exceptions.JavascriptException:
         print("Failed to get meeting members")
-        return 99
+        return None
 
     time.sleep(2)
     participants_elem = browser.find_element_by_css_selector("calling-roster-section[section-key='participantsInCall'] .roster-list-title")
@@ -498,6 +498,35 @@ def hangup():
     except exceptions.NoSuchElementException:
         return False
 
+#Takes in number of members in meeting, returns 0 if meeting will hangup, return None if not hangup
+def parseHangoutThreshold(members, totalMemberCount):
+    thresholdNumber = config["leave_threshold_number"]
+    thresholdPercent = config["leave_threshold_percent"]
+
+    #Check for leave threshold information in config file
+    #If both percent and number has a value, program prioritize number
+    if thresholdPercent != "" and thresholdNumber != "":
+        if 0 < members < int(thresholdNumber):
+            print("Last attendee in meeting")
+            hangup()
+            return 0
+    #If either percent or number has a value, use that value
+    elif thresholdNumber != "":
+        if 0 < members < int(thresholdNumber):
+            print("Last attendee in meeting")
+            hangup()
+            return 0
+    elif thresholdPercent != "":
+        if (members/totalMemberCount) < (0.01 * int(thresholdPercent)):
+            print("Last attendee in meeting")
+            hangup()
+            return 0
+    #Use 2 member as a final fallback if both are empty
+    else:
+        if 0 < members <= 2:
+            print("Last attendee in meeting")
+            hangup()
+            return 0
 
 def main():
     global config, meetings, mode, conversation_link
@@ -578,10 +607,10 @@ def main():
         check_interval = config['check_interval']
 
     interval_count = 0
+    total_member_count = 0
     while 1:
         timestamp = datetime.now()
         print(f"\n[{timestamp:%H:%M:%S}] Looking for new meetings")
-
         if "pause_search" in config and config['pause_search'] and current_meeting is not None:
             print("Meeting search os paused because you are still in a meeting")
         else:
@@ -608,15 +637,21 @@ def main():
                 if meeting_to_join is not None:
                     join_meeting(meeting_to_join)
 
+        if current_meeting is not None:
+            try:
+                if get_meeting_members() > total_member_count:
+                        #Line below is buggy. For some reason calling get_meeting_members() 2 times in a row will cause it to return None
+                        total_member_count = get_meeting_members()
+                        continue
+            except Exception as e:
+                print(e)
+
         meetings = []
 
         if "leave_if_last" in config and config['leave_if_last'] and interval_count % 5 == 0 and interval_count > 0:
             if current_meeting is not None:
                 members = get_meeting_members()
-
-                if 0 < members <= 2:
-                    print("Last attendee in meeting")
-                    hangup()
+                if parseHangoutThreshold(members=members, totalMemberCount=total_member_count) is not None:
                     interval_count = 0
 
         interval_count += 1
