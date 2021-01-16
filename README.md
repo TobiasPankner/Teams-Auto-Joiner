@@ -49,6 +49,12 @@ If set to a value greater than zero, the bot leaves every meeting after the spec
 - **leave_if_last:**
 If true, leaves the meeting if you are the last person in it.
 
+- **leave_threshold_number: (Must enable leave_if_last for this to work)**
+  Sets the threshold number of people in the meeting before auto leaving. If number of people in meeting is less than this threshold, program will leave.
+
+- **leave_threshold_percentage: (Must enable leave_if_last for this to work)**
+  Sets the threshold percentage of people still in the meeting before auto leaving.
+
 - **pause_search:**
 If true, doesn't search for new meetings while there is one active. Keep in mind to set auto_leave_after_min or leave_if_last,
 otherwise the bot will not search for meetings again.
