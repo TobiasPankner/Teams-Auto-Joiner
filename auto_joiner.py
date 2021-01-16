@@ -17,6 +17,7 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from msedge.selenium_tools import Edge, EdgeOptions
 
 browser: webdriver.Chrome = None
+total_members = None
 config = None
 meetings = []
 current_meeting = None
@@ -454,7 +455,7 @@ def get_meeting_members():
         browser.execute_script("document.getElementById('roster-button').click()")
     except exceptions.JavascriptException:
         print("Failed to get meeting members")
-        return 99
+        return None
 
     time.sleep(2)
     participants_elem = browser.find_element_by_css_selector("calling-roster-section[section-key='participantsInCall'] .roster-list-title")
@@ -498,9 +499,40 @@ def hangup():
     except exceptions.NoSuchElementException:
         return False
 
+#Handles logic for leave number threshold and percent threshold. Return True for did hangup, or False for did not.
+def handleLeaveThreshold(current_members, total_members):
+    print("Current: "+str(current_members))
+    print("Total: "+str(total_members))
+    leave_number = config["leave_threshold_number"]
+    leave_percentage = config["leave_threshold_percentage"]
+
+    if leave_number and leave_percentage == "":
+        if 0<current_members<3:
+            print("Last attendee in meeting")
+            hangup()
+            return True
+    if leave_number != "":
+        if float(leave_number) <= 0:
+            print(leave_number+" is not a valid value for threshold. Threshold number must be greater than 1.")
+            return False
+        if current_members < float(leave_number):
+            print("Last attendee in meeting")
+            hangup()
+            return True
+    else:
+        if 0 < float(leave_percentage) <= 150:
+            if (current_members/total_members)*100 < float(leave_percentage):
+                print("Last attendee in meeting")
+                hangup()
+                return True
+        else:
+          print(leave_percentage+" is not a valid value for threshold. Threshold percent must be greater than 0 and less than 100.")
+          return False 
+
+    return False 
 
 def main():
-    global config, meetings, mode, conversation_link
+    global config, meetings, mode, conversation_link, total_members
 
     mode = 1
     if "meeting_mode" in config and 0 < config["meeting_mode"] < 4:
@@ -606,19 +638,22 @@ def main():
 
                 meeting_to_join = decide_meeting()
                 if meeting_to_join is not None:
-                    join_meeting(meeting_to_join)
+                    total_members = 0
+                    join_meeting(meeting_to_join) 
 
         meetings = []
+        members_count = None
+        if current_meeting is not None:
+            switch_to_teams_tab()
+            members_count = get_meeting_members()
+            if members_count and members_count > total_members:
+                total_members = members_count
 
         if "leave_if_last" in config and config['leave_if_last'] and interval_count % 5 == 0 and interval_count > 0:
-            if current_meeting is not None:
-                members = get_meeting_members()
-
-                if 0 < members <= 2:
-                    print("Last attendee in meeting")
-                    hangup()
-                    interval_count = 0
-
+            if current_meeting is not None and members_count is not None and total_members is not None:
+                if handleLeaveThreshold(members_count, total_members):
+                    total_members = None
+                
         interval_count += 1
 
         time.sleep(check_interval)

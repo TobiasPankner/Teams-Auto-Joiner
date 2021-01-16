@@ -5,15 +5,19 @@
   "run_at_time": "",
 
   "meeting_mode": 1,
-  "organisation_num" : 1,
+  "organisation_num": 1,
   "random_delay": false,
-  "check_interval": 10,
+  "check_interval": 1,
 
   "auto_leave_after_min": -1,
+
   "leave_if_last": false,
+  "leave_threshold_number": "",
+  "leave_threshold_percentage": "",
+
   "pause_search": false,
 
-  "headless" : false,
+  "headless": false,
   "mute_audio": false,
   "chrome_type": "google-chrome",
 
@@ -25,10 +29,9 @@
         "Second Channel to blacklist"
       ]
     },
-     {
+    {
       "team_name": "Blacklist whole team",
-      "channel_names": [
-      ]
+      "channel_names": []
     }
   ],
   "blacklist_meeting_re": ""
