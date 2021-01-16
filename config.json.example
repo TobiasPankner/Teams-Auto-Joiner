@@ -7,7 +7,7 @@
   "meeting_mode": 1,
   "organisation_num": 1,
   "random_delay": false,
-  "check_interval": 1,
+  "check_interval": 10,
 
   "auto_leave_after_min": -1,
 
