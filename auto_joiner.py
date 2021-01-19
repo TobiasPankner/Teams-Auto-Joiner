@@ -214,14 +214,14 @@ def switch_to_calendar_tab():
 
 
 def change_organisation(org_num):
-    select_change_org = wait_until_found("button.tenant-switcher", 20)
+    select_change_org = wait_until_found(".tenant-switcher", 20)
     if select_change_org is None:
         print("Something went wrong while changing the organisation")
         return
 
     select_change_org.click()
 
-    change_org = wait_until_found(f"li.tenant-option[aria-posinset='{org_num}']", 20)
+    change_org = wait_until_found(f"li.tenant-option:nth-child({org_num})", 20)
     if change_org is None:
         print("Something went wrong while changing the organisation")
         return
