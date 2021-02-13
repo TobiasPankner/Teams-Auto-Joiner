@@ -454,13 +454,15 @@ def get_meeting_members():
     time.sleep(2)
     try:
         browser.execute_script("document.getElementById('roster-button').click()")
-    except exceptions.JavascriptException:
+
+        time.sleep(2)
+        participants_elem = browser.find_element_by_css_selector(
+            "calling-roster-section[section-key='participantsInCall'] .roster-list-title")
+        attendees_elem = browser.find_element_by_css_selector(
+            "calling-roster-section[section-key='attendeesInMeeting'] .roster-list-title")
+    except (exceptions.JavascriptException, exceptions.NoSuchElementException):
         print("Failed to get meeting members")
         return None
-
-    time.sleep(2)
-    participants_elem = browser.find_element_by_css_selector("calling-roster-section[section-key='participantsInCall'] .roster-list-title")
-    attendees_elem = browser.find_element_by_css_selector("calling-roster-section[section-key='attendeesInMeeting'] .roster-list-title")
 
     if participants_elem is not None:
         participants = [int(s) for s in participants_elem.get_attribute("aria-label").split() if s.isdigit()]
@@ -481,6 +483,7 @@ def hangup():
         return
 
     try:
+        switch_to_teams_tab()
         hangup_btn = browser.find_element_by_css_selector("button[data-tid='call-hangup']")
         hangup_btn.click()
 
