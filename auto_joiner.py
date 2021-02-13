@@ -315,7 +315,8 @@ def get_meetings(teams):
 def get_calendar_meetings():
     global meetings
 
-    if wait_until_found("div[class*='__cardHolder']", 20) is None:
+    if wait_until_found("div[class*='__cardHolder']", 20, False) is None:
+        print("No calendar element found, switch to mode 2 to only check channel meetings")
         return
 
     join_buttons = browser.find_elements_by_css_selector("button[class*='__joinButton'], button[class*='__activeCall']")
@@ -471,11 +472,6 @@ def get_meeting_members():
     else:
         attendees = 0
 
-    if mode != 3:
-        switch_to_teams_tab()
-    else:
-        switch_to_calendar_tab()
-
     return sum(participants + attendees)
 
 
@@ -499,15 +495,16 @@ def hangup():
     except exceptions.NoSuchElementException:
         return False
 
-#Handles logic for leave number threshold and percent threshold. Return True for did hangup, or False for did not.
-def handleLeaveThreshold(current_members, total_members):
+
+# Handles logic for leave number threshold and percent threshold. Return True for did hangup, or False for did not.
+def handle_leave_threshold(current_members, total_members):
     print("Current: "+str(current_members))
     print("Total: "+str(total_members))
     leave_number = config["leave_threshold_number"]
     leave_percentage = config["leave_threshold_percentage"]
 
     if leave_number and leave_percentage == "":
-        if 0<current_members<3:
+        if 0 < current_members < 3:
             print("Last attendee in meeting")
             hangup()
             return True
@@ -527,9 +524,10 @@ def handleLeaveThreshold(current_members, total_members):
                 return True
         else:
           print(leave_percentage+" is not a valid value for threshold. Threshold percent must be greater than 0 and less than 100.")
-          return False 
+          return False
 
-    return False 
+    return False
+
 
 def main():
     global config, meetings, mode, conversation_link, total_members
@@ -612,11 +610,11 @@ def main():
     interval_count = 0
     while 1:
         timestamp = datetime.now()
-        print(f"\n[{timestamp:%H:%M:%S}] Looking for new meetings")
-
         if "pause_search" in config and config['pause_search'] and current_meeting is not None:
-            print("Meeting search os paused because you are still in a meeting")
+            print(f"\n[{timestamp:%H:%M:%S}] Meeting search is paused because you are still in a meeting")
         else:
+            print(f"\n[{timestamp:%H:%M:%S}] Looking for new meetings")
+
             if mode != 3:
                 switch_to_teams_tab()
                 teams = get_all_teams()
@@ -639,21 +637,20 @@ def main():
                 meeting_to_join = decide_meeting()
                 if meeting_to_join is not None:
                     total_members = 0
-                    join_meeting(meeting_to_join) 
+                    join_meeting(meeting_to_join)
 
         meetings = []
         members_count = None
         if current_meeting is not None:
-            switch_to_teams_tab()
             members_count = get_meeting_members()
             if members_count and members_count > total_members:
                 total_members = members_count
 
         if "leave_if_last" in config and config['leave_if_last'] and interval_count % 5 == 0 and interval_count > 0:
             if current_meeting is not None and members_count is not None and total_members is not None:
-                if handleLeaveThreshold(members_count, total_members):
+                if handle_leave_threshold(members_count, total_members):
                     total_members = None
-                
+
         interval_count += 1
 
         time.sleep(check_interval)
