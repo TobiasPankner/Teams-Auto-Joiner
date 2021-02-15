@@ -430,12 +430,22 @@ def join_meeting(meeting):
     current_meeting = meeting
     already_joined_ids.append(meeting.m_id)
 
-    print(f"Joined meeting: {meeting.title}")
+    if "join_message" in config and config["join_message"] != "":
+        time.sleep(3)
+        try:
+            browser.execute_script("document.getElementById('chat-button').click()")
+            text_input = wait_until_found('div[role="textbox"]', 5)
+            text_input.send_keys(config["join_message"])
 
-    if mode != 3:
-        switch_to_teams_tab()
-    else:
-        switch_to_calendar_tab()
+            time.sleep(3)
+            send_button = wait_until_found("#send-message-button", 5)
+            send_button.click()
+            print(f'Sent message {config["join_message"]}')
+        except (exceptions.JavascriptException, exceptions.ElementNotInteractableException):
+            print("Failed to send join message")
+            pass
+
+    print(f"Joined meeting: {meeting.title}")
 
     if 'auto_leave_after_min' in config and config['auto_leave_after_min'] > 0:
         hangup_thread = Timer(config['auto_leave_after_min'] * 60, hangup)

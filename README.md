@@ -34,7 +34,7 @@ Change which meetings should be joined. Modes 1, 2 and 3 are available.
 `3` Only calendar meetings  
 
 - **organisation_num:**
-If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 1)
+If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 1)  
 <img width="30%" src="https://imgur.com/CWpK4wk.png">
 
 - **random_delay:**
@@ -42,6 +42,9 @@ If true, adds a random delay (10s-30s) before joining a meeting. Can be useful s
 
 - **check_interval:**
 The amount of seconds to wait before checking for meetings again. Only integer numbers greater than 1 are allowed.
+
+- **join_message:**
+A chat message sent when a meeting is joined.
 
 - **auto_leave_after_min:**
 If set to a value greater than zero, the bot leaves every meeting after the specified time (in minutes). Useful if you know the length of your meeting, if this is left a the default the bot will stay in the meeting until a new one is available.
