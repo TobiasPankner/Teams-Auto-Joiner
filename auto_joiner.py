@@ -129,7 +129,7 @@ class Meeting:
 
 def load_config():
     global config
-    with open('config.json') as json_data_file:
+    with open('config.json', encoding='utf-8') as json_data_file:
         config = json.load(json_data_file)
 
 
@@ -434,8 +434,14 @@ def join_meeting(meeting):
         time.sleep(3)
         try:
             browser.execute_script("document.getElementById('chat-button').click()")
-            text_input = wait_until_found('div[role="textbox"]', 5)
-            text_input.send_keys(config["join_message"])
+            text_input = wait_until_found('div[role="textbox"] > div', 5)
+
+            js_change_text = """
+              var elm = arguments[0], txt = arguments[1];
+              elm.innerHTML = txt;
+              """
+
+            browser.execute_script(js_change_text, text_input, config["join_message"])
 
             time.sleep(3)
             send_button = wait_until_found("#send-message-button", 5)
