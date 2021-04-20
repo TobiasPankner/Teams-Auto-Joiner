@@ -529,7 +529,7 @@ def handle_leave_threshold(current_members, total_members):
             return True
     if leave_number != "":
         if float(leave_number) <= 0:
-            print(leave_number+" is not a valid value for threshold. Threshold number must be greater than 1.")
+            print(leave_number + " is not a valid value for threshold. Threshold number must be greater than 1.")
             return False
         if current_members < float(leave_number):
             print("Last attendee in meeting")
@@ -537,13 +537,13 @@ def handle_leave_threshold(current_members, total_members):
             return True
     else:
         if 0 < float(leave_percentage) <= 150:
-            if (current_members/total_members)*100 < float(leave_percentage):
+            if (current_members / total_members) * 100 < float(leave_percentage):
                 print("Last attendee in meeting")
                 hangup()
                 return True
         else:
-          print(leave_percentage+" is not a valid value for threshold. Threshold percent must be greater than 0 and less than 100.")
-          return False
+            print(leave_percentage + " is not a valid value for threshold. Threshold percent must be greater than 0 and less than 100.")
+            return False
 
     return False
 
