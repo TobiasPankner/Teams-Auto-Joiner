@@ -678,18 +678,21 @@ def main():
 if __name__ == "__main__":
     load_config()
 
-    if 'run_at_time' in config and config['run_at_time'] != "":
-        now = datetime.now()
-        run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day)
+    if 'run_at_time' in config and config['run_at_time'] == "":
+        today = datetime.today().strftime('%A')
+        run_at = config['Time_Table'][str(today)]
+        config['run_at_time'] = run_at
 
-        if run_at.time() < now.time():
-            run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month,
-                                                                               day=now.day + 1)
+    now = datetime.now()
+    run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day)
 
-        start_delay = (run_at - now).total_seconds()
+    if run_at.time() < now.time():
+        run_at = datetime.strptime(config['run_at_time'], "%H:%M").replace(year=now.year, month=now.month, day=now.day + 1)
 
-        print(f"Waiting until {run_at} ({int(start_delay)}s)")
-        time.sleep(start_delay)
+    start_delay = (run_at - now).total_seconds()
+
+    print(f"Waiting until {run_at} ({int(start_delay)}s)")
+    time.sleep(start_delay)
 
     try:
         main()
