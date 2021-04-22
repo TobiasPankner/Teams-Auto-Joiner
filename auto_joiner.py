@@ -674,13 +674,21 @@ def main():
 
         time.sleep(check_interval)
 
+        now = datetime.now()
+        end_at_time = datetime.strptime(end_at, "%H:%M").replace(year=now.year, month=now.month, day=now.day)
+
+        if now.time() >= end_at_time.time():
+            exit(1)
+
 
 if __name__ == "__main__":
     load_config()
 
     if 'run_at_time' in config and config['run_at_time'] == "":
         today = datetime.today().strftime('%A')
-        run_at = config['Time_Table'][str(today)]
+        run_at = config['Time_Table'][str(today)][0]
+        global end_at
+        end_at = config['Time_Table'][str(today)][1]
         config['run_at_time'] = run_at
 
     now = datetime.now()
