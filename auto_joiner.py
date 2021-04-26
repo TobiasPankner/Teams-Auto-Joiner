@@ -522,7 +522,7 @@ def handle_leave_threshold(current_members, total_members):
     leave_number = config["leave_threshold_number"]
     leave_percentage = config["leave_threshold_percentage"]
 
-    if leave_number and leave_percentage == "":
+    if leave_number == "" and leave_percentage == "":
         if 0 < current_members < 3:
             print("Last attendee in meeting")
             hangup()
