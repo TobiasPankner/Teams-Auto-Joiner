@@ -15,6 +15,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.utils import ChromeType
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from msedge.selenium_tools import Edge, EdgeOptions
+from getpass import getpass
 
 browser: webdriver.Chrome = None
 total_members = None
@@ -555,14 +556,23 @@ def main():
     if "meeting_mode" in config and 0 < config["meeting_mode"] < 4:
         mode = config["meeting_mode"]
 
+    email = config['email']
+    password = config['password']
+
+    if email == "":
+        email = input('Email: ')
+
+    if password == "":
+        password = getpass('Password: ')
+
     init_browser()
 
     browser.get("https://teams.microsoft.com")
 
-    if config['email'] != "" and config['password'] != "":
+    if email != "" and password != "":
         login_email = wait_until_found("input[type='email']", 30)
         if login_email is not None:
-            login_email.send_keys(config['email'])
+            login_email.send_keys(email)
 
         # find the element again to avoid StaleElementReferenceException
         login_email = wait_until_found("input[type='email']", 5)
@@ -571,7 +581,7 @@ def main():
 
         login_pwd = wait_until_found("input[type='password']", 10)
         if login_pwd is not None:
-            login_pwd.send_keys(config['password'])
+            login_pwd.send_keys(password)
 
         # find the element again to avoid StaleElementReferenceException
         login_pwd = wait_until_found("input[type='password']", 5)
