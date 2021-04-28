@@ -20,7 +20,7 @@ I also made a short tutorial video on how to setup the bot: https://youtu.be/Ygk
 ## Configuration options  
   
 - **email/password:**  
-The email/password of your Microsoft account (can be left empty if you don't want to automatically login)  
+The email/password of your Microsoft account. In case you don't want to store your credentials on disk, you can leave any of them empty and you will be prompted to enter them. If you leave them empty in the prompt too, you will have to enter them in the browser.   
 
 - **run_at_time:**  
 Time to start the script at. Input is a string of the hour and minute in 24h format, if you want it to start immediately leave this empty. 
