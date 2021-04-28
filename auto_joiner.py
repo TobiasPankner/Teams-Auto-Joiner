@@ -416,6 +416,11 @@ def join_meeting(meeting):
         audio_btn.click()
         print("Audio off")
 
+    if 'delay' in config and config['delay'] > 0:
+        delay = config['delay']
+        print(f"Wating for {delay}s")
+        time.sleep(delay)
+
     if 'random_delay' in config and config['random_delay']:
         delay = random.randrange(10, 31, 1)
         print(f"Wating for {delay}s")
