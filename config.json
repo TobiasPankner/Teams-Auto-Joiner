@@ -1,24 +1,24 @@
 {
-  "email": "",
-  "password": "",
+  "email": "dhairyabahl2021ita@bpitdelhi.onmicrosoft.com",
+  "password": "Hersheybahl123",
 
   "run_at_time": "",
 
   "meeting_mode": 1,
   "organisation_num" : 1,
-  "random_delay": false,
+  "random_delay": true,
   "check_interval": 10,
 
   "join_message": "",
 
   "auto_leave_after_min": -1,
-  "leave_if_last": false,
-  "leave_threshold_number": "",
+  "leave_if_last": true,
+  "leave_threshold_number": "2",
   "leave_threshold_percentage": "",
   "pause_search": false,
 
-  "headless" : false,
-  "mute_audio": false,
+  "headless" : true,
+  "mute_audio": true,
   "chrome_type": "google-chrome",
 
   "blacklist": [

@@ -197,7 +197,6 @@ dmypy.json
 
 # End of https://www.gitignore.io/api/python,pycharm
 
-config.json
 venv
 .idea/
 debug.log
