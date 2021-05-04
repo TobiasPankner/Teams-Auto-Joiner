@@ -17,6 +17,8 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from msedge.selenium_tools import Edge, EdgeOptions
 from getpass import getpass
 
+from discord import Webhook, RequestsWebhookAdapter, Embed, File
+
 browser: webdriver.Chrome = None
 total_members = None
 config = None
@@ -189,6 +191,15 @@ def init_browser():
         print("Resized window height")
         browser.set_window_size(window_size['width'], 850)
 
+def discord_notification(title,description):
+    discord_webhook_url = config['discord_webhook_url']
+    webhook = Webhook.from_url(discord_webhook_url, adapter=RequestsWebhookAdapter())
+
+    embed = Embed(title=f"{title}", description=f"{description}",colour=0x0011FF)
+    embed.set_author(name="Ms-Teams-Auto-Joiner-Bot")
+    embed.set_footer(text=f"\nTime: [{datetime.now():%Y:%m:%d-%H:%M:%S}]\nlogin-id: {config['email']}")
+    
+    webhook.send(embed=embed)
 
 def wait_until_found(sel, timeout, print_error=True):
     try:
@@ -199,6 +210,7 @@ def wait_until_found(sel, timeout, print_error=True):
     except exceptions.TimeoutException:
         if print_error:
             print(f"Timeout waiting for element: {sel}")
+            discord_notification("Timeout error", sel)
         return None
 
 
@@ -448,11 +460,13 @@ def join_meeting(meeting):
             send_button = wait_until_found("#send-message-button", 5)
             send_button.click()
             print(f'Sent message {config["join_message"]}')
+            discord_notification("Sent message", {config["join_message"]})
         except (exceptions.JavascriptException, exceptions.ElementNotInteractableException):
             print("Failed to send join message")
             pass
 
     print(f"Joined meeting: {meeting.title}")
+    discord_notification("Joined meeting", f"{meeting.title}")
 
     if 'auto_leave_after_min' in config and config['auto_leave_after_min'] > 0:
         hangup_thread = Timer(config['auto_leave_after_min'] * 60, hangup)
@@ -505,6 +519,7 @@ def hangup():
         hangup_btn.click()
 
         print(f"Left Meeting: {current_meeting.title}")
+        discord_notification("Left Meeting", f"{current_meeting.title}")
 
         current_meeting = None
 
@@ -526,6 +541,7 @@ def handle_leave_threshold(current_members, total_members):
     if leave_number == "" and leave_percentage == "":
         if 0 < current_members < 3:
             print("Last attendee in meeting")
+            discord_notification("Left last in meeting", f"{meeting.title}")
             hangup()
             return True
     if leave_number != "":
@@ -591,8 +607,10 @@ def main():
         keep_logged_in = wait_until_found("input[id='idBtn_Back']", 5)
         if keep_logged_in is not None:
             keep_logged_in.click()
+            discord_notification("Logged in successfully","  ")
         else:
             print("Login Unsuccessful, recheck entries in config.json")
+            discord_notification("Login Unsuccessful"," recheck entries in config.json")
 
         use_web_instead = wait_until_found(".use-app-lnk", 5, print_error=False)
         if use_web_instead is not None:
@@ -626,6 +644,7 @@ def main():
 
         if len(teams) == 0:
             print("Not Teams found, is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
+            discord_notification("Not Teams found", "is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
             exit(1)
 
         print()
@@ -650,6 +669,7 @@ def main():
 
                 if len(teams) == 0:
                     print("Nothing found, is Teams in list mode?")
+                    discord_notification("Not Teams found", "is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
                     exit(1)
                 else:
                     get_meetings(teams)
@@ -667,6 +687,7 @@ def main():
                 if meeting_to_join is not None:
                     total_members = 0
                     join_meeting(meeting_to_join)
+                    # TODO:
 
         meetings = []
         members_count = None
@@ -709,3 +730,5 @@ if __name__ == "__main__":
 
         if hangup_thread is not None:
             hangup_thread.cancel()
+
+        discord_notification("Browser closed", "Thank you!")
