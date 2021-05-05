@@ -460,7 +460,7 @@ def join_meeting(meeting):
             send_button = wait_until_found("#send-message-button", 5)
             send_button.click()
             print(f'Sent message {config["join_message"]}')
-            discord_notification("Sent message", {config["join_message"]})
+            discord_notification(f'Sent message {config["join_message"]}')
         except (exceptions.JavascriptException, exceptions.ElementNotInteractableException):
             print("Failed to send join message")
             pass
@@ -643,8 +643,8 @@ def main():
         teams = get_all_teams()
 
         if len(teams) == 0:
-            print("Not Teams found, is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
-            discord_notification("Not Teams found", "is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
+            print("No Teams found, is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
+            discord_notification("No Teams found", "is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
             exit(1)
 
         print()
@@ -669,7 +669,7 @@ def main():
 
                 if len(teams) == 0:
                     print("Nothing found, is Teams in list mode?")
-                    discord_notification("Not Teams found", "is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
+                    discord_notification("No Teams found", "is MS Teams in list mode? (switch to mode 3 if you only want calendar meetings)")
                     exit(1)
                 else:
                     get_meetings(teams)
@@ -687,7 +687,6 @@ def main():
                 if meeting_to_join is not None:
                     total_members = 0
                     join_meeting(meeting_to_join)
-                    # TODO:
 
         meetings = []
         members_count = None
@@ -732,3 +731,4 @@ if __name__ == "__main__":
             hangup_thread.cancel()
 
         discord_notification("Browser closed", "Thank you!")
+       
