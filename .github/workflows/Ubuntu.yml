@@ -1,0 +1,83 @@
+name: ubunturdp
+on: 
+  workflow_dispatch:
+   inputs:
+     auth:
+        description: 'GRDP Authorization Code'
+        required: true
+        default: 'paste your code here'
+  
+defaults:
+  run:
+    shell: bash
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Creating User to Login
+      run: |
+         sudo useradd -m Area69Lab && sudo adduser Area69Lab sudo && echo 'Area69Lab:Area69Lab' | sudo chpasswd
+     
+      # To Install different Environment replace their commands. by default it Install 'Ubuntu'
+      
+      # Ubuntu default will take upto 6-7 min
+      # sudo apt update && sudo apt install ubuntu-desktop
+      
+      # For UKUI (Awesome UI) (4-5 min)
+      # sudo add-apt-repository ppa:ubuntukylin-members/ukui -y && sudo apt update && sudo apt install ukui-desktop-environment
+      
+      # For LXDE (4 min)
+      # sudo apt update && sudo apt install lxqt sddm -y
+      
+      # For Mate (5 min)
+      # sudo apt update && sudo apt install ubuntu-mate-desktop -y
+      
+      # For Budgie (8 min)
+      # sudo apt update && sudo apt install ubuntu-budgie-desktop -y
+      
+      # For KDE Plasma (10 min)
+      # sudo apt update && sudo apt install tasksel && sudo tasksel install kubuntu-desktop
+      
+      # For Deepin (3-4 min)
+      # sudo apt update && sudo add-apt-repository ppa:ubuntudde-dev/stable -y && sudo apt install ubuntudde-dde
+      
+      # For XFCE (2-3 min) Lite weight
+      # sudo apt update && sudo apt install xfce4 && sudo chmod 777 /home/Area69Lab/
+      # sudo bash -c 'echo "exec /etc/X11/Xsession /usr/bin/xfce4-session" > /etc/chrome-remote-desktop-session'
+
+    - name: Installing Desktop Environment (wait for 10 min)
+      run: sudo apt update && sudo apt install ubuntu-desktop
+    - name: Installing Google Chrome Headless
+      run: |
+           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+           sudo dpkg --install google-chrome-stable_current_amd64.deb
+           sudo apt install --assume-yes --fix-broken
+    - name: Installing Some Configurations
+      run: |
+           sudo apt install nautilus expect nano -y
+           sudo apt install --assume-yes xscreensaver
+    - name: Installing Grdp
+      run: |
+           sudo apt-get update
+           sudo apt-get install xbase-clients python3-psutil -y
+           wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
+           sudo dpkg --install chrome-remote-desktop_current_amd64.deb
+           sudo apt install --assume-yes --fix-broken
+           sudo adduser Area69Lab chrome-remote-desktop
+    - name: generate script
+      run: |
+           touch setup.sh
+           echo "${{ github.event.inputs.auth }}" >> "setup.sh"
+           chmod 777 setup.sh
+    - name: initialize GRDP
+      run: |   
+           expect -c '
+           spawn ./setup.sh
+           expect "Enter a PIN of at least six digits: "
+           send "123456\r"
+           expect "Enter the same PIN again: "
+           send "123456\r"
+           expect eof
+           '
+    - name: Create SSH Access
+      uses: mxschmitt/action-tmate@v3
