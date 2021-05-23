@@ -215,26 +215,39 @@ def switch_to_calendar_tab():
 
 
 def change_organisation(org_num):
-    select_change_org = wait_until_found("button.tenant-switcher", 20)
-    if select_change_org is None:
+    # Find and click the profile button
+    profile_button = wait_until_found("button#personDropdown", 20)
+    if profile_button is None:
         print("Something went wrong while changing the organisation")
         return
 
-    select_change_org.click()
+    profile_button.click()
 
-    change_org = wait_until_found(f"li.tenant-option[aria-posinset='{org_num}']", 20)
-    if change_org is None:
+    # Find and click the button to open the organisation list
+    open_org_list_button = wait_until_found("button#settings-manage-account-button", 10)
+    if open_org_list_button is None:
         print("Something went wrong while changing the organisation")
         return
 
-    change_org.click()
+    open_org_list_button.click()
+
+    # Find and click the organisation with the right id
+    change_org_button = wait_until_found(f"li.tenant-list-item[aria-posinset='{org_num+1}", 10)
+    if change_org_button is None:
+        print("Something went wrong while changing the organisation")
+        return
+
+    # if the user is already in the right organisation, return
+    try:
+        change_org_button.find_element_by_css_selector("button.active")
+    except exceptions.NoSuchElementException:
+        pass
+    else:
+        print("Organisation not changed (Already selected)")
+        return
+
+    change_org_button.click()
     time.sleep(5)
-
-    use_web_instead = wait_until_found(".use-app-lnk", 5, print_error=False)
-    if use_web_instead is not None:
-        use_web_instead.click()
-
-    time.sleep(1)
 
 
 def prepare_page(include_calendar):
@@ -599,7 +612,7 @@ def main():
             use_web_instead.click()
 
     # if additional organisations are setup in the config file
-    if 'organisation_num' in config and config['organisation_num'] > 1:
+    if 'organisation_num' in config and config['organisation_num'] > 0:
         change_organisation(config['organisation_num'])
 
     print("Waiting for correct page...", end='')

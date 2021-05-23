@@ -34,8 +34,9 @@ Change which meetings should be joined. Modes 1, 2 and 3 are available.
 `3` Only calendar meetings  
 
 - **organisation_num:**
-If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 1)  
-<img width="30%" src="https://imgur.com/CWpK4wk.png">
+If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 0), 
+set to -1 to never change organisation.  
+<img width="30%" src="https://imgur.com/4NTVrqj.png">
 
 - **random_delay:**
 If true, adds a random delay (10s-30s) before joining a meeting. Can be useful so the bot seems more "human like".

@@ -5,7 +5,7 @@
   "run_at_time": "",
 
   "meeting_mode": 1,
-  "organisation_num" : 1,
+  "organisation_num" : -1,
   "random_delay": false,
   "check_interval": 10,
 
