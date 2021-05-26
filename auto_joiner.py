@@ -616,13 +616,19 @@ def main():
         change_organisation(config['organisation_num'])
 
     print("Waiting for correct page...", end='')
-    if wait_until_found("#teams-app-bar", 60 * 5) is None:
-        # click the Try again button if teams load error
-        try_again = wait_until_found("button.oops-button", 10)
-        if try_again is not None:
-            try_again.click()
+    #try 3 times to check #teams-app-bar is detected or if the errors can be fixed
+    for i in range(3):
+        if wait_until_found("#teams-app-bar", 60) is None:
+            # click the Try again button if teams load error
+            try_again = wait_until_found("button.oops-button", 10)
+            if try_again is not None:
+                try_again.click()
+            else:
+                #if there is no Try again button to click then stop the program
+                exit(1)
         else:
-            exit(1)
+            #if the team-app-bar is detected then break the loop and go to the next step
+            break
 
     print("\rFound page, do not click anything on the webpage from now on.")
     # wait a bit so the meetings are initialized
