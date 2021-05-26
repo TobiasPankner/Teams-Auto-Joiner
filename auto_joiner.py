@@ -618,7 +618,7 @@ def main():
     print("Waiting for correct page...", end='')
     if wait_until_found("#teams-app-bar", 60 * 5) is None:
         # click the Try again button if teams load error
-        try_again = wait_until_found("button[class*='ts-btn ts-btn-primary oops-button']", 10)
+        try_again = wait_until_found("button.oops-button", 10)
         if try_again is not None:
             try_again.click()
         else:
