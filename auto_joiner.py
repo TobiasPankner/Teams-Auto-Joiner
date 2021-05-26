@@ -460,7 +460,7 @@ def join_meeting(meeting):
             send_button = wait_until_found("#send-message-button", 5)
             send_button.click()
             print(f'Sent message {config["join_message"]}')
-            discord_notification(f'Sent message {config["join_message"]}')
+            discord_notification("Sent message", {config["join_message"]})
         except (exceptions.JavascriptException, exceptions.ElementNotInteractableException):
             print("Failed to send join message")
             pass
