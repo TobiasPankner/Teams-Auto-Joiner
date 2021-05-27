@@ -35,5 +35,7 @@
       ]
     }
   ],
-  "blacklist_meeting_re": ""
+  "blacklist_meeting_re": "",
+
+  "discord_webhook_url" : ""
 }

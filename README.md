@@ -93,6 +93,12 @@ Leave empty to attend to all meetings.
 
 If you want to blacklist all the channels in a team, leave the square brackets empty: `"channel_names": []`.
 
+- **discord_webhook_url:**
+For getting Discord notifications you have to specify a [Discord webhook url](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks). Its an essential step.
+```json 
+  "discord_webhook_url" : "your_discord_channel_webHook_url" 
+```
+
 ## Run the script
 
  1. Rename the [config.json.example](config.json.example) file to "config.json"
