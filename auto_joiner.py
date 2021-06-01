@@ -191,6 +191,7 @@ def init_browser():
         print("Resized window height")
         browser.set_window_size(window_size['width'], 850)
 
+
 def discord_notification(title,description):
     discord_webhook_url = config['discord_webhook_url']
     webhook = Webhook.from_url(discord_webhook_url, adapter=RequestsWebhookAdapter())
@@ -200,6 +201,7 @@ def discord_notification(title,description):
     embed.set_footer(text=f"\nTime: [{datetime.now():%Y:%m:%d-%H:%M:%S}]\nlogin-id: {config['email']}")
     
     webhook.send(embed=embed)
+
 
 def wait_until_found(sel, timeout, print_error=True):
     try:
@@ -546,7 +548,7 @@ def handle_leave_threshold(current_members, total_members):
     if leave_number == "" and leave_percentage == "":
         if 0 < current_members < 3:
             print("Last attendee in meeting")
-            discord_notification("Left last in meeting", f"{meeting.title}")
+            discord_notification("Left last in meeting", f"{current_meeting.title}")
             hangup()
             return True
     if leave_number != "":
@@ -564,8 +566,8 @@ def handle_leave_threshold(current_members, total_members):
                 hangup()
                 return True
         else:
-          print(leave_percentage+" is not a valid value for threshold. Threshold percent must be greater than 0 and less than 100.")
-          return False
+            print(leave_percentage+" is not a valid value for threshold. Threshold percent must be greater than 0 and less than 100.")
+            return False
 
     return False
 
@@ -626,7 +628,7 @@ def main():
         change_organisation(config['organisation_num'])
 
     print("Waiting for correct page...", end='')
-    #try 3 times to check #teams-app-bar is detected or if the errors can be fixed
+    # try 3 times to check #teams-app-bar is detected or if the errors can be fixed
     for i in range(3):
         if wait_until_found("#teams-app-bar", 60) is None:
             # click the Try again button if teams load error
@@ -634,10 +636,10 @@ def main():
             if try_again is not None:
                 try_again.click()
             else:
-                #if there is no Try again button to click then stop the program
+                # if there is no Try again button to click then stop the program
                 exit(1)
         else:
-            #if the team-app-bar is detected then break the loop and go to the next step
+            # if the team-app-bar is detected then break the loop and go to the next step
             break
 
     print("\rFound page, do not click anything on the webpage from now on.")
@@ -747,4 +749,3 @@ if __name__ == "__main__":
             hangup_thread.cancel()
 
         discord_notification("Browser closed", "Thank you!")
-       
