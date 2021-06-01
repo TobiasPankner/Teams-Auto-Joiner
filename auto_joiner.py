@@ -223,14 +223,6 @@ def change_organisation(org_num):
 
     profile_button.click()
 
-    # Find and click the button to open the organisation list
-    open_org_list_button = wait_until_found("button#settings-manage-account-button", 10)
-    if open_org_list_button is None:
-        print("Something went wrong while changing the organisation")
-        return
-
-    open_org_list_button.click()
-
     # Find and click the organisation with the right id
     change_org_button = wait_until_found(f"li.tenant-list-item[aria-posinset='{org_num+1}", 10)
     if change_org_button is None:
