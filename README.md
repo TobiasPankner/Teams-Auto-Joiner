@@ -12,6 +12,7 @@ Automatically turns off your microphone and camera before joining. Automatic log
 Always joins the newest meeting and leaves either after a specified time, if you are the last person in the meeting or only if a new one is available (see [Configuration options](#configuration-options) for more information).
 I also made a short tutorial video on how to setup the bot: https://youtu.be/YgkSOqfIjf4
 
+![Demo](https://imgur.com/VQOJl8w.gif)
 
 ## Prerequisites  
   
@@ -91,6 +92,12 @@ If calendar meeting title matches a regular expression, it goes to blacklist.
 Leave empty to attend to all meetings.
 
 If you want to blacklist all the channels in a team, leave the square brackets empty: `"channel_names": []`.
+
+- **discord_webhook_url:**
+For getting Discord notifications you have to specify a [Discord webhook url](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks). Its an essential step.
+```json 
+  "discord_webhook_url" : "your_discord_channel_webHook_url" 
+```
 
 ## Run the script
 
