@@ -17,7 +17,7 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from msedge.selenium_tools import Edge, EdgeOptions
 from getpass import getpass
 
-from discord import Webhook, RequestsWebhookAdapter, Embed, File
+from discord import Webhook, RequestsWebhookAdapter, Embed, errors
 
 browser: webdriver.Chrome = None
 total_members = None
@@ -192,15 +192,21 @@ def init_browser():
         browser.set_window_size(window_size['width'], 850)
 
 
-def discord_notification(title,description):
+def discord_notification(title, description):
+    if 'discord_webhook_url' not in config or config['discord_webhook_url'] == "":
+        return
+
     discord_webhook_url = config['discord_webhook_url']
     webhook = Webhook.from_url(discord_webhook_url, adapter=RequestsWebhookAdapter())
 
     embed = Embed(title=f"{title}", description=f"{description}",colour=0x0011FF)
     embed.set_author(name="Ms-Teams-Auto-Joiner-Bot")
     embed.set_footer(text=f"\nTime: [{datetime.now():%Y:%m:%d-%H:%M:%S}]\nlogin-id: {config['email']}")
-    
-    webhook.send(embed=embed)
+
+    try:
+        webhook.send(embed=embed)
+    except:
+        print("Failed to send discord notification")
 
 
 def wait_until_found(sel, timeout, print_error=True):
