@@ -502,8 +502,8 @@ def get_meeting_members():
         print("Failed to open meeting member page")
         return None
 
-    participants_elem = wait_until_found("calling-roster-section[section-key='participantsInCall'] .roster-list-title", 3)
-    attendees_elem = wait_until_found("calling-roster-section[section-key='attendeesInMeeting'] .roster-list-title", 3)
+    participants_elem = wait_until_found("calling-roster-section[section-key='participantsInCall'] .roster-list-title", 3, print_error=False)
+    attendees_elem = wait_until_found("calling-roster-section[section-key='attendeesInMeeting'] .roster-list-title", 3, print_error=False)
 
     if participants_elem is None and attendees_elem is None:
         print("Failed to get meeting members")
@@ -512,12 +512,12 @@ def get_meeting_members():
     if participants_elem is not None:
         participants = [int(s) for s in participants_elem.get_attribute("aria-label").split() if s.isdigit()]
     else:
-        participants = 0
+        participants = [0]
 
     if attendees_elem is not None:
         attendees = [int(s) for s in attendees_elem.get_attribute("aria-label").split() if s.isdigit()]
     else:
-        attendees = 0
+        attendees = [0]
 
     return sum(participants + attendees)
 
