@@ -428,19 +428,20 @@ def join_meeting(meeting):
         active_correlation_id = uuid.group(0)
     else:
         active_correlation_id = ""
+
     # turn camera off
     video_btn = browser.find_element_by_css_selector("toggle-button[data-tid='toggle-video']>div>button")
     video_is_on = video_btn.get_attribute("aria-pressed")
     if video_is_on == "true":
         video_btn.click()
-        print("Video off")
+        print("Video disabled")
 
     # turn mic off
     audio_btn = browser.find_element_by_css_selector("toggle-button[data-tid='toggle-mute']>div>button")
     audio_is_on = audio_btn.get_attribute("aria-pressed")
     if audio_is_on == "true":
         audio_btn.click()
-        print("Audio off")
+        print("Microphone off")
 
     if 'random_delay' in config and config['random_delay']:
         delay = random.randrange(10, 31, 1)
