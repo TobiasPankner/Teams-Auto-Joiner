@@ -496,14 +496,16 @@ def get_meeting_members():
             continue
 
     time.sleep(2)
+
+    # open the meeting member side page
     try:
         browser.execute_script("document.getElementById('roster-button').click()")
     except exceptions.JavascriptException:
         print("Failed to open meeting member page")
         return None
 
-    participants_elem = wait_until_found("calling-roster-section[section-key='participantsInCall'] .roster-list-title", 3, print_error=False)
-    attendees_elem = wait_until_found("calling-roster-section[section-key='attendeesInMeeting'] .roster-list-title", 3, print_error=False)
+    participants_elem = wait_until_found("calling-roster-section[section-key='participantsInCall'] .roster-list-title", 2, print_error=False)
+    attendees_elem = wait_until_found("calling-roster-section[section-key='attendeesInMeeting'] .roster-list-title", 2, print_error=False)
 
     if participants_elem is None and attendees_elem is None:
         print("Failed to get meeting members")
@@ -518,6 +520,12 @@ def get_meeting_members():
         attendees = [int(s) for s in attendees_elem.get_attribute("aria-label").split() if s.isdigit()]
     else:
         attendees = [0]
+
+    # close the meeting member side page, this only makes a difference if pause_search is true
+    try:
+        browser.execute_script("document.getElementById('roster-button').click()")
+    except exceptions.JavascriptException:
+        print("Failed to close meeting member page, this might result in an error on next search")
 
     return sum(participants + attendees)
 
