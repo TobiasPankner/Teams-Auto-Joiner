@@ -13,8 +13,8 @@
 
   "auto_leave_after_min": -1,
   "leave_if_last": false,
-  "leave_threshold_number": "",
-  "leave_threshold_percentage": "",
+  "leave_threshold_number": -1,
+  "leave_threshold_percentage": -1,
   "pause_search": false,
 
   "headless" : false,
