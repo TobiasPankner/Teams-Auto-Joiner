@@ -37,7 +37,8 @@ Change which meetings should be joined. Modes 1, 2 and 3 are available.
 - **organisation_num:**
 If your Teams account is in multiple organisations, as seen in the example below, change the organisation_num to the number of the list item (counting starts from 0), 
 set to -1 to never change organisation.  
-<img width="30%" src="https://imgur.com/4NTVrqj.png">
+
+    <img width="30%" src="https://imgur.com/4NTVrqj.png">
 
 - **random_delay:**
 If true, adds a random delay (10s-30s) before joining a meeting. Can be useful so the bot seems more "human like".
@@ -82,30 +83,30 @@ If true, mutes all sound output of the browser. This doesn't effect your microph
 Valid options: `google-chrome`, `chromium`, `msedge`. By default, google chrome is used, but the script can also be used with Chromium or Microsoft Edge.
 
 - **blacklist:**
-A list of Teams and their channels to ignore. Meetings ocurring in these channels w**ill not be joined.
-If you have a Team called "Test1" and, within that, two channels called "General" and "Channel1" and you don't want to join meetings in the "General" Channel:
-```json
-"blacklist": [
-  {
-    "team_name": "Test1",
-    "channel_names": [
-      "General"
+A list of Teams and their channels to ignore. Meetings ocurring in these channels will not be joined.
+If you have a Team called "Test1" and, within that, two channels called "General" and "Channel1" and you don't want to join meetings in the "General" Channel:  
+    ```json
+    "blacklist": [
+      {
+        "team_name": "Test1",
+        "channel_names": [
+          "General"
+        ]
+      }
     ]
-  }
-]
-```
+    ```
+   If you want to blacklist all the channels in a team, leave the square brackets empty: `"channel_names": []`.
 
 - **blacklist_meeting_re:**
 If calendar meeting title matches a regular expression, it goes to blacklist.
-Leave empty to attend to all meetings.
-
-If you want to blacklist all the channels in a team, leave the square brackets empty: `"channel_names": []`.
+Leave empty to attend to all calendar meetings.  
 
 - **discord_webhook_url:**
-For getting Discord notifications you have to specify a [Discord webhook url](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks). Its an essential step.
-```json 
-  "discord_webhook_url" : "your_discord_channel_webHook_url" 
-```
+For getting Discord notifications you have to specify a [Discord webhook url](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).  
+
+    ```json 
+    "discord_webhook_url" : "your_discord_channel_webHook_url" 
+    ```
 
 ## Run the script
 
