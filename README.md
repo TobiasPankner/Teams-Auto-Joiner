@@ -68,7 +68,7 @@ otherwise the bot will not search for meetings again.
 If true, runs Chrome in headless mode (does not open GUI window and runs in background).
 
 - **mute_audio:**
-If true, mutes all the sounds.
+If true, mutes all sound output of the browser. This doesn't effect your microphone.
 
 - **chrome_type:**
 Valid options: `google-chrome`, `chromium`, `msedge`. By default, google chrome is used, but the script can also be used with Chromium or Microsoft Edge.

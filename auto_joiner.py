@@ -554,35 +554,31 @@ def hangup():
 
 
 # Handles logic for leave number threshold and percent threshold. Return True for did hangup, or False for did not.
-def handle_leave_threshold(current_members, total_members):
-    print("Current: "+str(current_members))
-    print("Total: "+str(total_members))
+def handle_leave_threshold(current_meeting_members, total_meeting_members):
+    print(f"Current members in meeting: {current_meeting_members}")
+    print(f"Total members of the meeting: {total_meeting_members}")
     leave_number = config["leave_threshold_number"]
     leave_percentage = config["leave_threshold_percentage"]
 
-    if leave_number == "" and leave_percentage == "":
-        if 0 < current_members < 3:
-            print("Last attendee in meeting")
-            discord_notification("Left last in meeting", f"{current_meeting.title}")
+    if leave_number is not None and leave_number != "" and int(leave_number) > 0:
+        if current_meeting_members < int(leave_number):
+            print("Leave threshold (absolute) triggered")
+            discord_notification("Left meeting, threshold triggered", f"{current_meeting.title}")
             hangup()
             return True
-    if leave_number != "":
-        if float(leave_number) <= 0:
-            print(leave_number+" is not a valid value for threshold. Threshold number must be greater than 1.")
-            return False
-        if current_members < float(leave_number):
-            print("Last attendee in meeting")
+
+    if leave_percentage is not None and leave_percentage != "" and 0 < int(leave_percentage) <= 100:
+        if (current_meeting_members / total_meeting_members) * 100 < int(leave_percentage):
+            print("Leave threshold (percentage) triggered")
+            discord_notification("Left meeting, threshold triggered", f"{current_meeting.title}")
             hangup()
             return True
-    else:
-        if 0 < float(leave_percentage) <= 150:
-            if (current_members/total_members)*100 < float(leave_percentage):
-                print("Last attendee in meeting")
-                hangup()
-                return True
-        else:
-            print(leave_percentage+" is not a valid value for threshold. Threshold percent must be greater than 0 and less than 100.")
-            return False
+
+    if 0 < current_meeting_members < 3:
+        print("Last attendee in meeting")
+        discord_notification("Left meeting, last member", f"{current_meeting.title}")
+        hangup()
+        return True
 
     return False
 
