@@ -526,7 +526,13 @@ def get_meeting_members():
     try:
         browser.execute_script("document.getElementById('roster-button').click()")
     except exceptions.JavascriptException:
-        print("Failed to close meeting member page, this might result in an error on next search")
+        # if the roster button doesn't exist click the three dots button before
+        try:
+            browser.execute_script("document.getElementById('callingButtons-showMoreBtn').click()")
+            time.sleep(1)
+            browser.execute_script("document.getElementById('roster-button').click()")
+        except exceptions.JavascriptException:
+            print("Failed to close meeting member page, this might result in an error on next search")
 
     return sum(participants + attendees)
 
