@@ -42,7 +42,8 @@ set to -1 to never change organisation.
 
 - **random_delay:**
 Adds a random delay (random integer between the two parameters, in seconds) before joining a meeting. Can be useful so the bot seems more "human like" or to avoid being one of the first few people to join a meeting. 
-For a fixed delay, set both parameters to the same Integer. eg: [30,30] will add a fixed delay of 30s before joining the meet.
+For a fixed delay, set both parameters to the same Integer. 
+eg: [30,30] will add a fixed delay of 30s before joining the meet.
 
 - **check_interval:**
 The amount of seconds to wait before checking for meetings again. Only integer numbers greater than 1 are allowed.
