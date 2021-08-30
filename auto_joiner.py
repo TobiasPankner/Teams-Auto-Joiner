@@ -443,10 +443,14 @@ def join_meeting(meeting):
         audio_btn.click()
         print("Microphone off")
 
-    if 'random_delay' in config and config['random_delay']:
-        delay = random.randrange(10, 31, 1)
-        print(f"Wating for {delay}s")
-        time.sleep(delay)
+    if 'random_delay' in config:
+        if config['random_delay'][0] == config['random_delay'][1]:
+            delay = config['random_delay'][0]
+        else:
+            delay = random.randrange(config['random_delay'][0], config['random_delay'][1], 1)
+        if delay > 0:
+            print(f"Wating for {delay}s")
+            time.sleep(delay)
 
     # find again to avoid stale element exception
     join_now_btn = wait_until_found("button[data-tid='prejoin-join-button']", 5)
