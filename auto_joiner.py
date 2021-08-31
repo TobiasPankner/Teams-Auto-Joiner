@@ -451,10 +451,7 @@ def join_meeting(meeting):
             else:
                 delay = 0
         else:
-            if config['random_delay'][0] == config['random_delay'][1]:
-                delay = config['random_delay'][0]
-            else:
-                delay = random.randrange(config['random_delay'][0], config['random_delay'][1], 1)
+            delay = random.randrange(config['random_delay'][0], config['random_delay'][1] + 1 , 1)
         
         if delay > 0:
             print(f"Wating for {delay}s")
