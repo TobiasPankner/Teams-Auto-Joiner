@@ -443,8 +443,8 @@ def join_meeting(meeting):
         audio_btn.click()
         print("Microphone off")
 
-    if 'random_delay' in config:
-        if type(config['random_delay'])==bool:
+    if 'random_delay' in config: 
+        if isinstance(config['random_delay'], bool):
             print(f"Please update the random_delay in config.json file as per latest instructions in README")
             if config['random_delay']:
                 delay = random.randrange(10, 31, 1)
