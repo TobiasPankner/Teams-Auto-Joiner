@@ -6,7 +6,7 @@
 
   "meeting_mode": 1,
   "organisation_num" : -1,
-  "random_delay": false,
+  "random_delay": [0,0],
   "check_interval": 10,
 
   "join_message": "",
