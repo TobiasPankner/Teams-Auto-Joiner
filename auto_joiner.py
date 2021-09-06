@@ -577,7 +577,7 @@ def handle_leave_threshold(current_meeting_members, total_meeting_members):
     leave_percentage = config["leave_threshold_percentage"]
 
     if leave_number is not None and leave_number != "" and int(leave_number) > 0:
-        if (total_meeting_members - current_meeting_members) < int(leave_number):
+        if (total_meeting_members - current_meeting_members) >= int(leave_number):
             print("Leave threshold (absolute) triggered")
             discord_notification("Left meeting, threshold triggered", f"{current_meeting.title}")
             hangup()
