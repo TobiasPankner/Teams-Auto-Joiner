@@ -497,7 +497,16 @@ def join_meeting(meeting):
 
 
 def get_meeting_members():
+    global current_meeting
+
     meeting_elems = browser.find_elements_by_css_selector(".one-call")
+
+    # meeting has been closed by host
+    if len(meeting_elems) == 0:
+        current_meeting = None
+        print("You are no longer in any meeting")
+        return
+
     for meeting_elem in meeting_elems:
         try:
             meeting_elem.click()
@@ -737,6 +746,9 @@ def main():
         members_count = None
         if current_meeting is not None:
             members_count = get_meeting_members()
+            if current_meeting is None:
+                continue
+
             if members_count and members_count > total_members:
                 total_members = members_count
 
