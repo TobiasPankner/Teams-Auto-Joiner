@@ -763,7 +763,12 @@ def main():
 
 
 if __name__ == "__main__":
-    load_config()
+    try:
+        load_config()
+    except Exception as e:
+        print("Configuration file missing or in wrong format")
+        print(str(e))
+        exit(1)
 
     if 'run_at_time' in config and config['run_at_time'] != "":
         now = datetime.now()
