@@ -1,20 +1,18 @@
 {
-  "conversation_url": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_MGQ2OGQyMGEtMjY5Yi00Zjk4LWI5MjQtNWE5YWNlZDlmZGM5%40thread.v2/0?context=%7b%22Tid%22%3a%22190ce420-b157-44ae-bc2f-69563baa5a3b%22%2c%22Oid%22%3a%221dba6059-b6a4-4816-87df-14025c75d0eb%22%7d",
+  "conversation_url": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_NjRmOTFkODEtNjdiNi00ZGQyLWEwMzktMzY3ZjA3MDc1NzY0%40thread.v2/0?context=%7b%22Tid%22%3a%22190ce420-b157-44ae-bc2f-69563baa5a3b%22%2c%22Oid%22%3a%22270dbc74-a464-4ad4-83b2-34492b09ab0d%22%7d",
   "run_at_time": "",
   "random_delay": [0,0],
-  "check_interval": 10,
+  "check_interval": 3,
 
-  "join_message": "",
+  "join_message": "Hello",
 
   "auto_leave_after_min": -1,
-  "leave_if_last": false,
-  "leave_threshold_number": -1,
+  "leave_if_last": true,
+  "leave_threshold_number": 2,
   "leave_threshold_percentage": -1,
   "pause_search": false,
 
   "headless" : false,
   "mute_audio": false,
-  "chrome_type": "google-chrome",
-
-  "discord_webhook_url" : ""
+  "chrome_type": "google-chrome"
 }
