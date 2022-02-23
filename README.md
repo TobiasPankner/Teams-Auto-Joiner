@@ -111,7 +111,7 @@ For getting Discord notifications you have to specify a [Discord webhook url](ht
 
 ## Run the script
 
- 1. Rename the [config.json.example](config.json.example) file to "config.json"
+ 1. Rename the [config.json.example](config.json) file to "config.json"
  2. Edit the "config.json" file to fit your preferences (optional)
  3. Install dependencies:   ```pip install -r requirements.txt```
  4. Run [auto_joiner.py](auto_joiner.py): `python auto_joiner.py`
