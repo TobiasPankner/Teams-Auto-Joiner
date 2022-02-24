@@ -250,15 +250,15 @@ def main():
     interval_count = 0
     total_members = 0
     while 1:
-        members_count = None
-        members_count = get_meeting_members()
+        # members_count = None
+        # members_count = get_meeting_members()
 
-        if members_count and members_count > total_members:
-            total_members = members_count
+        # if members_count and members_count > total_members:
+        #     total_members = members_count
 
-        if members_count is not None and total_members is not None:
-            if handle_leave_threshold(members_count, total_members):
-                total_members = None
+        # if members_count is not None and total_members is not None:
+        #     if handle_leave_threshold(members_count, total_members):
+        #         total_members = None
 
         interval_count += 1
 
