@@ -47,6 +47,10 @@ def init_browser():
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
     chrome_options.add_argument('--use-fake-ui-for-media-stream')
+    chrome_options.add_argument('--disable-popup-blocking')
+    chrome_options.add_argument('--incognito')
+    chrome_options.add_argument('--disable-notifications')
+
     chrome_options.add_experimental_option('prefs', {
         'credentials_enable_service': False,
         'profile.default_content_setting_values.media_stream_mic': 1,
@@ -102,24 +106,6 @@ def wait_until_found(sel, timeout, print_error=True):
 
 
 def get_meeting_members():
-    global current_meeting
-
-    meeting_elems = browser.find_elements_by_css_selector(".one-call")
-
-    # meeting has been closed by host
-    if len(meeting_elems) == 0:
-        current_meeting = None
-        print("You are no longer in any meeting")
-        return
-
-    for meeting_elem in meeting_elems:
-        try:
-            meeting_elem.click()
-            break
-        except:
-            continue
-
-    time.sleep(2)
 
     # open the meeting member side page
     try:
@@ -128,22 +114,9 @@ def get_meeting_members():
         print("Failed to open meeting member page")
         return None
 
-    participants_elem = wait_until_found("calling-roster-section[section-key='participantsInCall'] .roster-list-title", 2, print_error=False)
-    attendees_elem = wait_until_found("calling-roster-section[section-key='attendeesInMeeting'] .roster-list-title", 2, print_error=False)
-
-    if participants_elem is None and attendees_elem is None:
-        print("Failed to get meeting members")
-        return None
-
-    if participants_elem is not None:
-        participants = [int(s) for s in participants_elem.get_attribute("aria-label").split() if s.isdigit()]
-    else:
-        participants = [0]
-
-    if attendees_elem is not None:
-        attendees = [int(s) for s in attendees_elem.get_attribute("aria-label").split() if s.isdigit()]
-    else:
-        attendees = [0]
+    members = len(browser.find_elements_by_css_selector("li[data-tid^='participantsInCall-'"))
+    print(members)
+    time.sleep(2)
 
     # close the meeting member side page, this only makes a difference if pause_search is true
     try:
@@ -157,13 +130,12 @@ def get_meeting_members():
         except exceptions.JavascriptException:
             print("Failed to close meeting member page, this might result in an error on next search")
 
-    return sum(participants + attendees)
+    return members
 
 
 def hangup():
     try:
-        hangup_btn = browser.find_element_by_css_selector("button[data-tid='call-hangup']")
-        hangup_btn.click()
+        browser.execute_script("document.getElementById('hangup-button').click()")
 
         if hangup_thread:
             hangup_thread.cancel()
@@ -251,7 +223,7 @@ def main():
     print('Meeting joined succefuly')
 
     if "join_message" in config and config["join_message"] != "":
-        time.sleep(3)
+        time.sleep(10)
         try:
             browser.execute_script("document.getElementById('chat-button').click()")
             text_input = wait_until_found('div[role="textbox"] > div', 5)
@@ -263,7 +235,7 @@ def main():
 
             browser.execute_script(js_change_text, text_input, config["join_message"])
 
-            time.sleep(3)
+            time.sleep(5)
             send_button = wait_until_found("#send-message-button", 5)
             send_button.click()
             print(f'Sent message {config["join_message"]}')
@@ -271,11 +243,12 @@ def main():
             print("Failed to send join message")
             pass
 
-    check_interval = 15
+    check_interval = 5
     if "check_interval" in config and config['check_interval'] > 1:
         check_interval = config['check_interval']
 
     interval_count = 0
+    total_members = 0
     while 1:
         members_count = None
         members_count = get_meeting_members()
@@ -283,12 +256,15 @@ def main():
         if members_count and members_count > total_members:
             total_members = members_count
 
-        if "leave_if_last" in config and config['leave_if_last'] and interval_count % 5 == 0 and interval_count > 0:
-            if members_count is not None and total_members is not None:
-                if handle_leave_threshold(members_count, total_members):
-                    total_members = None
+        if members_count is not None and total_members is not None:
+            if handle_leave_threshold(members_count, total_members):
+                total_members = None
 
         interval_count += 1
+
+        #Fermeture si raccrocher
+        if browser.current_url.__contains__("post-calling"):
+            break
 
         time.sleep(check_interval)
 
