@@ -11,7 +11,6 @@ from msedge.selenium_tools import Edge, EdgeOptions
 
 #Méthode qui initialise le navigateur grâce au information du JSON de config
 def init_browser(config):
-    global browser
 
     if "chrome_type" in config and config['chrome_type'] == "msedge":
         chrome_options = EdgeOptions()

@@ -8,7 +8,6 @@ from helpers.browser_initier import *
 from helpers.config_loader import *
 from helpers.identity_faker import *
 from helpers.web_selector_fonder import *
-from threading import Timer
 
 @dataclass
 class Bot_teams:
@@ -21,7 +20,7 @@ class Bot_teams:
     email: str
     browser: str
     
-    def connect(self):
+    def connect(self,meeting_url):
         def turn_camera_off(self):
             # turn camera off
             video_btn = self.browser.find_element_by_css_selector("toggle-button[data-tid='toggle-video']>div>button")
@@ -44,11 +43,13 @@ class Bot_teams:
             else : 
                 return False
         
+        self.browser.get(meeting_url)
+        print(self.browser.current_url)
         #connect in web client
         self.browser.find_element_by_css_selector("button[data-tid='joinOnWeb']").click()
         
         #Waiting init of meeting
-        time.sleep(10)
+        time.sleep(15)
         turn_camera_off(self)
         turn_mic_off(self)
         
@@ -79,7 +80,7 @@ class Bot_teams:
                 return False
         hang_up(self)
         return True
-
+            
     def send_message():
         pass
     
@@ -88,9 +89,9 @@ class Bot_teams:
 
 @dataclass
 class Bot_manager:
-    name:str
-    bot_self:Bot_teams
-    bots_list:list = None
+    name: str
+    bot_master: Bot_teams
+    bots_list: list = None
 
     def generate_bots(self,bots_quantity,config):
         self.bots_list = list()
@@ -107,10 +108,9 @@ class Bot_manager:
                     bot_identity.email,
                     init_browser(config)))
 
-    def connect_bots(self,config):
+    def connect_bots(self,meeting_url):
         for bot in self.bots_list :
-            bot.browser.get(config.get("conversation_url"))
-            bot.connect()
+            bot.connect(meeting_url)
         return True
     
     def disconnect_bots(self):
