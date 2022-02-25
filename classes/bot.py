@@ -8,6 +8,7 @@ from helpers.browser_initier import *
 from helpers.config_loader import *
 from helpers.identity_faker import *
 from helpers.web_selector_fonder import *
+from threading import Timer
 
 @dataclass
 class Bot_teams:
@@ -78,7 +79,7 @@ class Bot_teams:
                 return False
         hang_up(self)
         return True
-            
+
     def send_message():
         pass
     
@@ -88,6 +89,7 @@ class Bot_teams:
 @dataclass
 class Bot_manager:
     name:str
+    bot_self:Bot_teams
     bots_list:list = None
 
     def generate_bots(self,bots_quantity,config):
