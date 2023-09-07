@@ -2,6 +2,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/TobiasPankner/Teams-Auto-Joiner.svg?style=social&label=Star)](https://GitHub.com/TobiasPankner/Teams-Auto-Joiner/stargazers/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3TU2XDBK2JFU4&source=url)
 
+- [Maintenance status](#maintenance-status)
 - [Prerequisites](#prerequisites)
 - [Configuration options](#configuration-options)
 - [Run the script](#run-the-script)
@@ -13,6 +14,10 @@ Always joins the newest meeting and leaves either after a specified time, if you
 I also made a short tutorial video on how to setup the bot: https://youtu.be/YgkSOqfIjf4
 
 ![Demo](https://imgur.com/VQOJl8w.gif)
+
+## Maintenance status
+**This project is not actively maintained by me anymore, therefore I cannot guarantee it still working. Feel free to fork this repository or submit Pull requests.**
+
 
 ## Prerequisites  
   

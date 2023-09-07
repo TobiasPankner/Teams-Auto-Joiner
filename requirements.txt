@@ -1,4 +1,4 @@
 selenium==3.141.0
-webdriver_manager==3.2.2
+webdriver_manager==4.0.0
 msedge-selenium-tools==3.141.3
 discord.py==1.7.2
