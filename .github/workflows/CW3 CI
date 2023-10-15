@@ -1,4 +1,4 @@
-name: Django CI
+name: CW3 CI
 
 on:
   push:
